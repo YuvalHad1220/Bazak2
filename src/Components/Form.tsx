@@ -1,6 +1,6 @@
-import { useForm, RegisterOptions } from "react-hook-form";
+import { useForm, RegisterOptions, Controller } from "react-hook-form";
 import Card from "./Card";
-import { Box, Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 
 type fieldTypes = "SELECT" | "TEXT_FIELD" | "DATE" | "MULTI_SELECT" | "BUTTON" | "TITLE" | "DYNAMIC_LIST";
@@ -21,7 +21,6 @@ interface iBasicField {
 interface iTextField extends iBasicField {
     inputType?: "number" | "text" | "date"
     defaultValue?: number | string | Date,
- 
 }
 
 
@@ -32,7 +31,6 @@ interface iButtonField extends iBasicField {
 interface iMultipleSelectField extends iBasicField {
     options: iSelectable[],
     defaultSelectedValues?: iSelectable[],
-    // onChange: (selectedValues: iSelectable[]) => void
 }
 
 interface iSelectField extends iBasicField {
@@ -54,12 +52,12 @@ const fields: iField[] = [
         title: "מספר מכונית",
         fieldType: "TEXT_FIELD",
         width: 2,
-        registerOptions: {
-            required: "חובה להכניס מספר מכונית",
-            maxLength: {value: 8, message: "מספר מכונית חייב להיות בדיוק 8 תווים"},
-            minLength: {value: 8, message: "מספר מכונית חייב להיות בדיוק 8 תווים"},
+//        registerOptions: {
+//            required: "חובה להכניס מספר מכונית",
+//            maxLength: {value: 8, message: "מספר מכונית חייב להיות בדיוק 8 תווים"},
+//            minLength: {value: 8, message: "מספר מכונית חייב להיות בדיוק 8 תווים"},
 
-        }
+  //      }
     },
     {
         id: "search_car",
@@ -90,9 +88,9 @@ const fields: iField[] = [
         width: 3
     },
     {
-        id: "group",
-        title: "קבוצה",
-        fieldType: "SELECT",
+        id: "groups",
+        title: "קבוצות",
+        fieldType: "MULTI_SELECT",
         options: [
             {id: "group1", value:"קבוצה א"},
             {id: "group2", value:"קבוצה ב"},
@@ -332,7 +330,8 @@ const fields: iField[] = [
 ]
 
 const Form = () => {
-    const { register, handleSubmit, getValues, trigger, formState: {errors}, getFieldState } = useForm();
+    const { register, handleSubmit, getValues, control, trigger, formState: {errors}, getFieldState } = useForm();
+    console.log("rerender");
 
     const parseTextField = (field: iTextField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}` : field.id;
@@ -368,7 +367,6 @@ const Form = () => {
             </Button>
         );
     }
-    console.log("rerender");
     const parseSelectField = (field: iSelectField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
         const value = getValues(fullFieldId);
@@ -397,8 +395,7 @@ const Form = () => {
         const innerFields = field.fields;
         const fieldId = field.id;
 
-        const fields = useMemo(() => {
-            return Array.from({ length: count }).map((_, index) => (
+        const fields = Array.from({ length: count }).map((_, index) => (
                 <Grid container spacing={2} key={index}>
                     {innerFields.map((field) => (
                         <Grid item xs={field.width ? field.width : 12} key={field.id}>
@@ -407,7 +404,6 @@ const Form = () => {
                     ))}
                 </Grid>
             ));
-        }, [count, innerFields, fieldId]);
 
 
 
@@ -419,6 +415,35 @@ const Form = () => {
         );
     }
 
+    const parseMultiSelect = (field: iMultipleSelectField, parent?: string) => {
+        const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
+        return <Controller
+    name={fullFieldId}
+    control={control}
+    render={({ field: { onChange, ..._field } }) => (
+        <Autocomplete
+        multiple
+        disableCloseOnSelect
+        forcePopupIcon
+        filterSelectedOptions
+        freeSolo
+        options={field.options.map(item => item.value)}
+        onChange={(_, data) => onChange(data)}
+        renderInput={(params) => (<TextField {...params} label={field.title} inputProps={{...params.inputProps, readOnly: true}}/>)}
+        defaultValue={field.defaultSelectedValues?.map(item => item.value)}
+        size="small"
+
+            {..._field}
+        />
+    )}
+/>
+
+
+
+        
+    };
+
+
     // parent will follow if we use dynamicField
     const Field = ({field, parent} : {field: iField, parent?: string}) => {
         switch (field.fieldType) {
@@ -427,6 +452,7 @@ const Form = () => {
             case "SELECT": return parseSelectField(field as iSelectField, parent);
             case "TITLE": return <Typography textAlign="center" variant="h6">{field.title}</Typography>
             case "DYNAMIC_LIST": return <DynamicField field={field as iDynamicListField} />
+            case "MULTI_SELECT": return parseMultiSelect(field as iMultipleSelectField, parent);
         }
     } 
 
