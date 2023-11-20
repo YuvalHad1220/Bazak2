@@ -1,4 +1,4 @@
-import { useForm, RegisterOptions, Controller } from "react-hook-form";
+import { useForm, RegisterOptions, Controller, useFieldArray } from "react-hook-form";
 import Card from "./Card";
 import { Autocomplete, Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
@@ -388,60 +388,47 @@ const Form = () => {
 
     };
 
-    const DynamicField = ({field} : {field: iDynamicListField}) => {
-        const [count, setCount] = useState(0);
+    const parseDynamicField = (field: iDynamicListField, parent?: string) => {
+        const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
+        const {fields, append, remove} = useFieldArray({control, name: fullFieldId});
 
         const fieldTitle = field.title;
         const innerFields = field.fields;
-        const fieldId = field.id;
-
-        const fields = Array.from({ length: count }).map((_, index) => (
-                <Grid container spacing={2} key={index}>
-                    {innerFields.map((field) => (
-                        <Grid item xs={field.width ? field.width : 12} key={field.id}>
-                            <Field field={field} parent={`${fieldId}.${index}`} />
-                        </Grid>
-                    ))}
-                </Grid>
-            ));
-
-
 
         return (
-            <Grid item container columnSpacing={2} rowSpacing={2.5}>
-                <Button onClick={() => setCount(prev => prev + 1)}>{fieldTitle}</Button>
-                {fields}
-            </Grid>
+                 <Grid item xs={field.width ? field.width : 12} key={field.id}>
+                    {fields.map((field, index) => {
+                        return innerFields.map(innerField => <Field key={field.id + index} field={innerField} parent={`${fullFieldId}.${index}`}/>)
+                    })}
+                    <Button onClick={() => append({})}>{fieldTitle}</Button>
+                 </Grid>
+
         );
     }
 
     const parseMultiSelect = (field: iMultipleSelectField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
-        return <Controller
-    name={fullFieldId}
-    control={control}
-    render={({ field: { onChange, ..._field } }) => (
-        <Autocomplete
-        multiple
-        disableCloseOnSelect
-        forcePopupIcon
-        filterSelectedOptions
-        freeSolo
-        options={field.options.map(item => item.value)}
-        onChange={(_, data) => onChange(data)}
-        renderInput={(params) => (<TextField {...params} label={field.title} inputProps={{...params.inputProps, readOnly: true}}/>)}
-        defaultValue={field.defaultSelectedValues?.map(item => item.value)}
-        size="small"
-
-            {..._field}
+        return (
+            <Controller
+                name={fullFieldId}
+                control={control}
+                render={({ field: { onChange, ..._field } }) => (
+                    <Autocomplete
+                        multiple
+                        disableCloseOnSelect
+                        forcePopupIcon
+                        filterSelectedOptions
+                        freeSolo
+                        options={field.options.map(item => item.value)}
+                        onChange={(_, data) => onChange(data)}
+                        renderInput={(params) => (<TextField {...params} label={field.title} inputProps={{...params.inputProps, readOnly: true}}/>)}
+                        defaultValue={field.defaultSelectedValues?.map(item => item.value)}
+                        size="small"
+                        {..._field}
+                    />
+            )}
         />
-    )}
-/>
-
-
-
-        
-    };
+    )};
 
 
     // parent will follow if we use dynamicField
@@ -451,7 +438,7 @@ const Form = () => {
             case "BUTTON": return parseButtonField(field as iButtonField, parent);
             case "SELECT": return parseSelectField(field as iSelectField, parent);
             case "TITLE": return <Typography textAlign="center" variant="h6">{field.title}</Typography>
-            case "DYNAMIC_LIST": return <DynamicField field={field as iDynamicListField} />
+            case "DYNAMIC_LIST": return parseDynamicField(field as iDynamicListField, parent);
             case "MULTI_SELECT": return parseMultiSelect(field as iMultipleSelectField, parent);
         }
     } 

@@ -1,7 +1,7 @@
 
 import BazakIcon from "../assets/bazak_logo.svg?react";
 import { iNavItem, iNavSection } from "../interfaces";
-import { Box, Button, Divider, ListItemButton, SvgIcon, Typography, useTheme } from "@mui/material";
+import { Box, Button, Divider, SvgIcon, Typography, useTheme } from "@mui/material";
 import Card from "./Card";
 import React from "react";
 import AddUserIcon from "../assets/add_user.svg?react";
