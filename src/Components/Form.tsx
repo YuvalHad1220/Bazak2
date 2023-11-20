@@ -1,7 +1,6 @@
 import { useForm, RegisterOptions, Controller, useFieldArray } from "react-hook-form";
 import Card from "./Card";
 import { Autocomplete, Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
 
 type fieldTypes = "SELECT" | "TEXT_FIELD" | "DATE" | "MULTI_SELECT" | "BUTTON" | "TITLE" | "DYNAMIC_LIST";
 interface iSelectable {
@@ -322,7 +321,8 @@ const fields: iField[] = [
                     {id: "not kashir", value: "לא כשיר"}
                 ],
                 defaultValue: {id: "kashir_system", value: "כשיר"},
-                width: 6
+                width: 6,
+                dependsOn: "systemName"
             }     
         ]
     } as iDynamicListField
@@ -345,8 +345,9 @@ const Form = () => {
         )
     }
     const parseButtonField = (field: iButtonField, parent?: string) => {
+        const dependsOnId = field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
         const onButtonClick = async () => {
-            if (!(field.onAction && field.dependsOn)){
+            if (!(field.onAction && dependsOnId)){
                 console.log(field.id, "does not have a dependency function")
             }
             await trigger(field.dependsOn);
@@ -354,7 +355,7 @@ const Form = () => {
                 return;
             }
 
-            field.onAction!({value: getValues(field.dependsOn!)})
+            field.onAction!({value: getValues(dependsOnId!)})
         }
         return (
             <Button 
@@ -369,6 +370,7 @@ const Form = () => {
     }
     const parseSelectField = (field: iSelectField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
+        const dependsOnId = field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
         const value = getValues(fullFieldId);
         return (
                 <TextField 
@@ -378,7 +380,7 @@ const Form = () => {
                 defaultValue={field.defaultValue ? field.defaultValue.value : ''}
                 label={field.title} 
                 {...(value ? {value} : {}) }
-                disabled={!getValues(field.dependsOn!)}
+                disabled={!getValues(dependsOnId!)}
                 inputProps={register(fullFieldId, {async onChange() {
                     await trigger(fullFieldId)
                 },})}>
@@ -390,18 +392,23 @@ const Form = () => {
 
     const parseDynamicField = (field: iDynamicListField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
-        const {fields, append, remove} = useFieldArray({control, name: fullFieldId});
-
+        const {fields, append, remove} = useFieldArray({control, name: fullFieldId,});
         const fieldTitle = field.title;
         const innerFields = field.fields;
 
         return (
-                 <Grid item xs={field.width ? field.width : 12} key={field.id}>
-                    {fields.map((field, index) => {
-                        return innerFields.map(innerField => <Field key={field.id + index} field={innerField} parent={`${fullFieldId}.${index}`}/>)
-                    })}
-                    <Button onClick={() => append({})}>{fieldTitle}</Button>
-                 </Grid>
+            <Grid item container columnSpacing={1.5} rowSpacing={2}>
+                <Grid item xs={12}>
+                    <Button variant="outlined" onClick={() => append({})}>{fieldTitle}</Button>
+                </Grid>
+                {fields.map((field, index) => 
+                    innerFields.map(innerField => (
+                        <Grid item key={`${field.id}-${index}-${innerField.id}`} xs={innerField.width ? innerField.width : 12}>
+                            <Field field={innerField} parent={`${fullFieldId}.${index}`}/>
+                        </Grid>
+                    ))
+                )}
+            </Grid>
 
         );
     }
@@ -441,14 +448,18 @@ const Form = () => {
             case "DYNAMIC_LIST": return parseDynamicField(field as iDynamicListField, parent);
             case "MULTI_SELECT": return parseMultiSelect(field as iMultipleSelectField, parent);
         }
-    } 
+    }
 
     return (
-        <Card sx={{height: "100%", padding: 10}}>
+        <Card sx={{height: "100%", padding: 4}}>
         {/*toast on error */}
             <form onSubmit={handleSubmit(data => console.log(data))}>
-                <Grid container columnSpacing={2} rowSpacing={2.5}>
-                    {fields.map(field => <Grid item xs={field.width ? field.width : 12} key={field.id}><Field field={field} /></Grid>)}
+                <Grid container columnSpacing={1.5} rowSpacing={2}>
+                    {fields.map(field => (
+                        <Grid item xs={field.width ? field.width : 12} key={field.id}>
+                            <Field field={field} />
+                        </Grid>
+                    ))}
                 </Grid>
                 <Button sx={{mt: 3}} type="submit" variant="contained">הגש</Button>
             </form>
