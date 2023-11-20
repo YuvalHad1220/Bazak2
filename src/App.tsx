@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import MainLayout from "./Layouts/MainLayout";
 import PATHS from "./paths";
+import Form from "./Components/Form";
 
 function App() {
   const router = createBrowserRouter([
@@ -15,7 +16,7 @@ function App() {
       children: [
         {
           path: PATHS.DASHBOARD,
-          element: "Dashboard",
+          element: <Form />
         },
         {
           path: PATHS.SIGN_IN,
