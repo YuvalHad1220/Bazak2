@@ -1,42 +1,49 @@
 
 import BazakIcon from "../assets/bazak_logo.svg?react";
 import { iNavItem, iNavSection } from "../interfaces";
-import { Box, Button, Divider, SvgIcon, Typography } from "@mui/material";
+import { Box, Button, Divider, ListItemButton, SvgIcon, Typography, useTheme } from "@mui/material";
 import Card from "./Card";
 import React from "react";
 import AddUserIcon from "../assets/add_user.svg?react";
 import ToTeneTableIcon from "../assets/to_tene_table.svg?react";
+import { NavLink } from "react-router-dom";
 interface iSidebar {
   navSections: iNavSection[],
 }
 
 const Sidebar: React.FC<iSidebar> = ({navSections}) => {
+  const theme = useTheme();
 
   const SidebarFooter = () => (
-    <Box sx={{display: "flex", flexDirection: "column", gap: 1.5, mt: "auto"}}>
+    <Box sx={{display: "flex", flexDirection: "column", gap: 1.5, mt: "auto", textAlign: "center"}}>
       <Button variant="contained">
-        <AddUserIcon fill="white" />
-        <Typography sx={{textAlign: "center", mr: "auto", ml: "auto"}}>רשום משתמש</Typography>
+        <AddUserIcon fill={theme.palette.background.default} />
+        <Typography sx={{mr: "auto", ml: "auto"}}>רשום משתמש</Typography>
       </Button>
 
       <Button variant="outlined">
-        <ToTeneTableIcon />
-        <Typography sx={{textAlign: "center", mr: "auto", ml: "auto"}}>חזרה לשולחן טנא</Typography>
+        <ToTeneTableIcon fill={theme.palette.background.default}/>
+        <Typography sx={{mr: "auto", ml: "auto"}}>חזרה לשולחן טנא</Typography>
       </Button>
     </Box>
   )
 
 
   const NavItem = ({item} : {item: iNavItem}) => (
-    <Button>
-      <item.Icon />
-      <Typography color="text.primary" sx={{textAlign: "center", mr: "auto", ml: "auto"}}>{item.text}</Typography>
-    </Button>
+    <NavLink to={item.to} style={{textDecoration: "none", color: "inherit"}}>
+      {isActive => (
+      <Button href={item.to} fullWidth variant={isActive.isActive ? "contained" : "text"} color={isActive.isActive ? "primary" : "inherit"}>
+              <item.Icon />
+              <Typography color="text.primary" sx={{mr: "auto", ml: "auto"}}>{item.text}</Typography>
+          </Button>)
+          }
+    </NavLink>
+
   );
 
   const MainNavSection = ({navSections} : {navSections: iNavSection[]}) => (
     navSections.map(section => (
-      <Box key={section.text} sx={{display: "flex", flexDirection: "column", gap: 1.5}}>
+      <Box key={section.text} sx={{display: "flex", flexDirection: "column", gap: 1.5, textAlign: "center"}}>
         <Divider>{section.text}</Divider>
         {section.items.map(navItem => <NavItem key={navItem.text} item={navItem} />)}
       </Box>

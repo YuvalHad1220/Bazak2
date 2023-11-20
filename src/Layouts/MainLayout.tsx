@@ -1,6 +1,5 @@
-import { Box, Grid } from "@mui/material";
+import {Grid } from "@mui/material";
 import Sidebar from "../Components/Sidebar";
-import Card from "../Components/Card";
 import HomepageIcon from "../assets/homepage.svg?react";
 import ZminotTatYehidotIcon from "../assets/zminot_tat_yehidot.svg?react";
 import ScreensIcon from "../assets/screens.svg?react";
@@ -11,23 +10,25 @@ import PermissionIcon from "../assets/permission_validation.svg?react";
 import SettingsIcon from "../assets/settings.svg?react";
 import AboutIcon from "../assets/about.svg?react";
 import { iNavItem, iNavSection } from "../interfaces";
+import { Outlet } from "react-router-dom";
+import PATHS from "../paths";
 
 const MainLayout = () => {
 
     const generalNavItems: iNavItem[] = [
         {
           text: "מסך בית",
-          to: "",
+          to: PATHS.DASHBOARD,
           Icon: HomepageIcon
         },
         {
           text: "המסכים שלי",
-          to: "",
+          to: "/lol",
           Icon: ScreensIcon
         },
         {
           text: "זמינות תת יחידות",
-          to: "",
+          to: PATHS.SUB_UNIT_ZMINOT,
           Icon: ZminotTatYehidotIcon
         }
       ];
@@ -35,17 +36,17 @@ const MainLayout = () => {
       const tableNavItems: iNavItem[] = [
         {
           text: "דיווח זמינות",
-          to: "",
+          to: PATHS.ZMINOT_TABLE,
           Icon: DivoahZminotIcon
         },
         {
           text: "עץ יחידות",
-          to: "",
+          to: PATHS.UNIT_TREE,
           Icon: UnitTreeIcon
         },
         {
           text: "מרכז המצגות",
-          to: "",
+          to: PATHS.RAMAM_TABLE,
           Icon: SlidesCenterIcon
         }
       ];
@@ -53,17 +54,17 @@ const MainLayout = () => {
       const adminNavItems: iNavItem[] = [
         {
           text: "תקינות הזנות",
-          to: "",
+          to: PATHS.TKINOT_HAZANOT,
           Icon: PermissionIcon
         },
         {
           text: "ניהול מערכת",
-          to: "",
+          to: PATHS.SYSTEM_MANAGEMENT,
           Icon: SettingsIcon
         },
         {
           text: "אודות המערכת",
-          to: "",
+          to: PATHS.ABOUT,
           Icon: AboutIcon
         }
       ];
@@ -92,7 +93,7 @@ const MainLayout = () => {
         </Grid>
   
         <Grid item xs={11} md={10.5}>
-          <Box height="100%" sx={{display: "flex", flexDirection: "column", gap: 2}}>
+          {/* <Box height="100%" sx={{display: "flex", flexDirection: "column", gap: 2}}>
             <Card sx={{height: 78}}>
               navbar
             </Card>
@@ -102,7 +103,8 @@ const MainLayout = () => {
             <Card sx={{height: 70}}>
               footer
             </Card>
-          </Box>
+          </Box> */}
+          <Outlet />
         </Grid>
   
       </Grid>
