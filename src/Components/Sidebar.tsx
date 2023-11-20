@@ -32,13 +32,12 @@ const Sidebar: React.FC<iSidebar> = ({navSections}) => {
   const NavItem = ({item} : {item: iNavItem}) => (
     <NavLink to={item.to} style={{textDecoration: "none", color: "inherit"}}>
       {isActive => (
-        <Button href={item.to} fullWidth variant={isActive.isActive ? "contained" : "text"} color={isActive.isActive ? "primary" : "inherit"}>
+        <Button component={Box} href={item.to} fullWidth variant={isActive.isActive ? "contained" : "text"} color={isActive.isActive ? "primary" : "inherit"}>
           <item.Icon />
           <Typography color="text.primary" sx={{mr: "auto", ml: "auto"}}>{item.text}</Typography>
         </Button>)
         }
     </NavLink>
-
   );
 
   const MainNavSection = ({navSections} : {navSections: iNavSection[]}) => (

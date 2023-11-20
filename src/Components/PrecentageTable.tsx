@@ -1,14 +1,9 @@
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { styled, useTheme } from '@mui/material/styles';
-
 import { iMagadData, iUnitData } from "../interfaces";
-import { NavLink } from "react-router-dom";
 interface iPrecentageTable {
     magadData: iMagadData
 }
-
-
-
 
 const PrecentageTable: React.FC<iPrecentageTable> = ({magadData}) => {
     const theme = useTheme();
@@ -16,7 +11,6 @@ const PrecentageTable: React.FC<iPrecentageTable> = ({magadData}) => {
     const StickyTableCell = styled(CenteredTableCell)({position: "sticky", left: "0", backgroundColor: theme.palette.primary.dark});    
     // Collect unique gdod keys and titles
     const uniqueGdods: { [gdodKey: string]: string } = {};
-
     // Iterate over categories
     for (const categoryKey in magadData) {
         if (magadData.hasOwnProperty(categoryKey)) {
@@ -57,10 +51,10 @@ const PrecentageTable: React.FC<iPrecentageTable> = ({magadData}) => {
         }
 
         const gdodTotals = Object.keys(foundMagad.items).reduce((totals, gdod) => {
-          const tankData = foundMagad.items[gdod];
-          if (tankData) {
-            totals.trueCount += tankData.trueCount;
-            totals.falseCount += tankData.falseCount;
+          const unitData = foundMagad.items[gdod];
+          if (unitData) {
+            totals.trueCount += unitData.trueCount;
+            totals.falseCount += unitData.falseCount;
           }
           return totals;
         }, { title: magad, trueCount: 0, falseCount: 0 });
