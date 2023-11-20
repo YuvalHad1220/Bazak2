@@ -1,9 +1,9 @@
 import { useForm, RegisterOptions } from "react-hook-form";
 import Card from "./Card";
-import { Button, Grid, MenuItem, TextField } from "@mui/material";
-import { useState } from "react";
+import { Box, Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
+import { useMemo, useState } from "react";
 
-type fieldTypes = "SELECT" | "TEXT_FIELD" | "DATE" | "SELECTIONS_LIST" | "BUTTON";
+type fieldTypes = "SELECT" | "TEXT_FIELD" | "DATE" | "MULTI_SELECT" | "BUTTON" | "TITLE" | "DYNAMIC_LIST";
 interface iSelectable {
     id: string | number,
     value: string
@@ -19,7 +19,9 @@ interface iBasicField {
 }
 
 interface iTextField extends iBasicField {
-    inputType?: "number" | "text" | "date" 
+    inputType?: "number" | "text" | "date"
+    defaultValue?: number | string | Date,
+ 
 }
 
 
@@ -27,19 +29,24 @@ interface iButtonField extends iBasicField {
     onAction?: (dependOnValue: any) => void
 }
 
-interface iMultipleField extends iBasicField {
+interface iMultipleSelectField extends iBasicField {
     options: iSelectable[],
-    selectedValues: iSelectable[],
-    onChange: (selectedValues: iSelectable[]) => void
+    defaultSelectedValues?: iSelectable[],
+    // onChange: (selectedValues: iSelectable[]) => void
 }
 
-// a chosen option will be returned on the same type
 interface iSelectField extends iBasicField {
     options: iSelectable[],
     dependsOn?: string
+    defaultValue?: iSelectable,
+
 }
 
-type iField = iTextField | iButtonField | iMultipleField | iSelectField;
+interface iDynamicListField extends iBasicField {
+    fields: iField[]
+}
+
+type iField = iTextField | iButtonField | iMultipleSelectField | iSelectField;
 const fields: iField[] = [
     {
         id: "carnumber",
@@ -79,6 +86,7 @@ const fields: iField[] = [
             {id: "half", value: "חצי כוח עובד"}
             
         ],
+        defaultValue: {id: "working", value:"עובד"},
         width: 3
     },
     {
@@ -251,24 +259,93 @@ const fields: iField[] = [
             { id: "hachai", value: "החי" }
         ],
         width: 3
-    }
+    },
+    {
+        id: "zminot",
+        title: "זמינות וכשירות",
+        fieldType: "TITLE"
+    },
+    {
+        id: "zminut",
+        title: "זמינות",
+        fieldType: "SELECT",
+        options: [
+            { id: "zmin", value: "זמין" },
+            { id: "loZmin", value: "לא זמין" }
+        ],
+        width: 6
+    },
+    {
+        id: "kshirot",
+        title: "כשירות",
+        fieldType: "SELECT",
+        options: [
+            { id: "kshir", value: "כשיר" },
+            { id: "loKshir", value: "לא כשיר" }
+        ],
+        width: 6
+    },
+    {
+        id: "mikom",
+        title: "מיקום",
+        fieldType: "TEXT_FIELD",
+        width: 6
+    },
+    {
+        id: "tech_title",
+        title: "טכנולוגיות",
+        fieldType: "TITLE"
+    },
+    {
+        id: "systems",
+        title: "הוספת טכנולוגיות",
+        dependsOn: "makat",
+        fieldType: "DYNAMIC_LIST",
+        fields: [
+            {
+                id: "systemName",
+                title: "שם מערכת",
+                fieldType: "SELECT",
+                options: [
+                    { id: "system1", value: "מערכת 1" },
+                    { id: "system2", value: "מערכת 2" },
+                    { id: "system3", value: "מערכת 3" },
+                    { id: "system4", value: "מערכת 4" },
+                    { id: "system5", value: "מערכת 5" }
+                ],
+                width: 6
+            },
+            {
+                id: "isSystemKashir",
+                title: "כשירות",
+                fieldType: "SELECT",
+                options: [
+                    {id: "kashir_system", value: "כשיר"},
+                    {id: "not kashir", value: "לא כשיר"}
+                ],
+                defaultValue: {id: "kashir_system", value: "כשיר"},
+                width: 6
+            }     
+        ]
+    } as iDynamicListField
     
 ]
 
 const Form = () => {
     const { register, handleSubmit, getValues, trigger, formState: {errors}, getFieldState } = useForm();
 
-    const parseTextField = (field: iTextField) => {
+    const parseTextField = (field: iTextField, parent?: string) => {
+        const fullFieldId = parent ? `${parent}.${field.id}` : field.id;
         return (
                 <TextField size="small" 
                 fullWidth 
                 error={errors[field.id] ? true : false} 
                 type={field.inputType} 
                 label={field.title}  
-                {...register(field.id, {...field.registerOptions})} />
+                {...register(fullFieldId, {...field.registerOptions})} />
         )
     }
-    const parseButtonField = (field: iButtonField) => {
+    const parseButtonField = (field: iButtonField, parent?: string) => {
         const onButtonClick = async () => {
             if (!(field.onAction && field.dependsOn)){
                 console.log(field.id, "does not have a dependency function")
@@ -292,19 +369,20 @@ const Form = () => {
         );
     }
     console.log("rerender");
-    const parseSelectField = (field: iSelectField) => {
-        const value = getValues(field.id);
+    const parseSelectField = (field: iSelectField, parent?: string) => {
+        const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
+        const value = getValues(fullFieldId);
         return (
                 <TextField 
                 select 
                 fullWidth 
                 size="small" 
-                defaultValue='' 
+                defaultValue={field.defaultValue ? field.defaultValue.value : ''}
                 label={field.title} 
                 {...(value ? {value} : {}) }
                 disabled={!getValues(field.dependsOn!)}
-                inputProps={register(field.id, {async onChange() {
-                    await trigger(field.id)
+                inputProps={register(fullFieldId, {async onChange() {
+                    await trigger(fullFieldId)
                 },})}>
                     {field.options.map(selectable => (<MenuItem key={selectable.id} value={selectable.value}>{selectable.value}</MenuItem>))}
                 </TextField>
@@ -312,17 +390,48 @@ const Form = () => {
 
     };
 
-    const Field = ({field} : {field: iField}) => {
+    const DynamicField = ({field} : {field: iDynamicListField}) => {
+        const [count, setCount] = useState(0);
+
+        const fieldTitle = field.title;
+        const innerFields = field.fields;
+        const fieldId = field.id;
+
+        const fields = useMemo(() => {
+            return Array.from({ length: count }).map((_, index) => (
+                <Grid container spacing={2} key={index}>
+                    {innerFields.map((field) => (
+                        <Grid item xs={field.width ? field.width : 12} key={field.id}>
+                            <Field field={field} parent={`${fieldId}.${index}`} />
+                        </Grid>
+                    ))}
+                </Grid>
+            ));
+        }, [count, innerFields, fieldId]);
+
+
+
+        return (
+            <Grid item container columnSpacing={2} rowSpacing={2.5}>
+                <Button onClick={() => setCount(prev => prev + 1)}>{fieldTitle}</Button>
+                {fields}
+            </Grid>
+        );
+    }
+
+    // parent will follow if we use dynamicField
+    const Field = ({field, parent} : {field: iField, parent?: string}) => {
         switch (field.fieldType) {
-            case "TEXT_FIELD": return parseTextField(field as iTextField);
-            case "BUTTON": return parseButtonField(field as iButtonField);
-            case "SELECT": return parseSelectField(field as iSelectField);
-            
+            case "TEXT_FIELD": return parseTextField(field as iTextField, parent);
+            case "BUTTON": return parseButtonField(field as iButtonField, parent);
+            case "SELECT": return parseSelectField(field as iSelectField, parent);
+            case "TITLE": return <Typography textAlign="center" variant="h6">{field.title}</Typography>
+            case "DYNAMIC_LIST": return <DynamicField field={field as iDynamicListField} />
         }
     } 
 
     return (
-        <Card sx={{height: "100%",}}>
+        <Card sx={{height: "100%", padding: 10}}>
         {/*toast on error */}
             <form onSubmit={handleSubmit(data => console.log(data))}>
                 <Grid container columnSpacing={2} rowSpacing={2.5}>
