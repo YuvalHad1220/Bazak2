@@ -154,6 +154,65 @@ const ZminotTatYehidotView = () => {
                 "gdod 34": { trueCount: 12, falseCount: 10, title: "גדוד 34" },
             }
         },
+        vehicles: {
+            title: "רכבים",
+            items: {
+                "gdod 1": { trueCount: 5, falseCount: 15, title: "גדוד 1" },
+                "gdod 3": { trueCount: 8, falseCount: 12, title: "גדוד 3" },
+                "gdod 7": { trueCount: 6, falseCount: 14, title: "גדוד 7" },
+                "gdod 9": { trueCount: 12, falseCount: 8, title: "גדוד 9" },
+                "gdod 10": { trueCount: 15, falseCount: 5, title: "גדוד 10" },
+                "gdod 15": { trueCount: 20, falseCount: 2, title: "גדוד 15" },
+                "gdod 20": { trueCount: 10, falseCount: 8, title: "גדוד 20" },
+                "gdod 29": { trueCount: 25, falseCount: 8, title: "גדוד 29" },
+                "gdod 34": { trueCount: 15, falseCount: 12, title: "גדוד 34" },
+                "gdod 39": { trueCount: 35, falseCount: 3, title: "גדוד 39" },
+            }
+        },
+        weapons: {
+            title: "נשק",
+            items: {
+                "gdod 11": { trueCount: 25, falseCount: 3, title: "גדוד 11" },
+                "gdod 16": { trueCount: 18, falseCount: 6, title: "גדוד 16" },
+                "gdod 21": { trueCount: 12, falseCount: 10, title: "גדוד 21" },
+                "gdod 28": { trueCount: 15, falseCount: 10, title: "גדוד 28" },
+                "gdod 33": { trueCount: 30, falseCount: 5, title: "גדוד 33" },
+                "gdod 38": { trueCount: 22, falseCount: 7, title: "גדוד 38" },
+                "gdod 41": { trueCount: 18, falseCount: 12, title: "גדוד 41" },
+                "gdod 46": { trueCount: 25, falseCount: 5, title: "גדוד 46" },
+                "gdod 51": { trueCount: 30, falseCount: 2, title: "גדוד 51" },
+            }
+        },
+        aircraft: {
+            title: "מטוסים",
+            items: {
+                "gdod 12": { trueCount: 30, falseCount: 5, title: "גדוד 12" },
+                "gdod 17": { trueCount: 22, falseCount: 8, title: "גדוד 17" },
+                "gdod 22": { trueCount: 15, falseCount: 12, title: "גדוד 22" },
+                "gdod 14": { trueCount: 12, falseCount: 10, title: "גדוד 14" },
+                "gdod 19": { trueCount: 28, falseCount: 2, title: "גדוד 19" },
+                "gdod 24": { trueCount: 16, falseCount: 6, title: "גדוד 24" },
+            }
+        },
+        watercraft: {
+            title: "ימיים",
+            items: {
+                "gdod 13": { trueCount: 18, falseCount: 7, title: "גדוד 13" },
+                "gdod 18": { trueCount: 25, falseCount: 3, title: "גדוד 18" },
+                "gdod 23": { trueCount: 10, falseCount: 10, title: "גדוד 23" },
+                "gdod 25": { trueCount: 8, falseCount: 15, title: "גדוד 25" },
+                "gdod 30": { trueCount: 18, falseCount: 5, title: "גדוד 30" },
+                "gdod 35": { trueCount: 12, falseCount: 10, title: "גדוד 35" },
+            }
+        },
+        space: {
+            title: "חלל",
+            items: {
+                "gdod 26": { trueCount: 5, falseCount: 20, title: "גדוד 26" },
+                "gdod 31": { trueCount: 15, falseCount: 8, title: "גדוד 31" },
+                "gdod 36": { trueCount: 25, falseCount: 3, title: "גדוד 36" },
+            }
+        },
     };
     
     return (

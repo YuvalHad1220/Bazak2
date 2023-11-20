@@ -2,6 +2,7 @@ import { Box, Table, TableBody, TableCell, TableHead, TableRow, Typography } fro
 import { styled, useTheme } from '@mui/material/styles';
 
 import { iMagadData, iUnitData } from "../interfaces";
+import { NavLink } from "react-router-dom";
 interface iPrecentageTable {
     magadData: iMagadData
 }
@@ -74,8 +75,6 @@ const PrecentageTable: React.FC<iPrecentageTable> = ({magadData}) => {
         return totals;
       }, { title: "all", trueCount: 0, falseCount: 0 });
 
-      console.log(rowTotals);
-
       const FormattedData = ({ data }: { data?: iUnitData }) => {
         if (!data) {
           return (
@@ -105,15 +104,23 @@ const PrecentageTable: React.FC<iPrecentageTable> = ({magadData}) => {
                     {/*empty table cell*/}
                     <StickyTableCell></StickyTableCell>
                     {Object.keys(magadData).map((rowHeader) => (
-                        <StickyTableCell key={rowHeader}>{magadData[rowHeader].title}</StickyTableCell>
+                        <StickyTableCell key={rowHeader}>
+                            <Typography variant="h6">
+                                {magadData[rowHeader].title}
+                            </Typography>
+                        </StickyTableCell>
                     ))}
-                    <StickyTableCell>הכל</StickyTableCell>
+                    <StickyTableCell>
+                        <Typography variant="h6">הכל</Typography>
+                    </StickyTableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
                 {Object.keys(uniqueGdods).map(gdodId => (
                     <TableRow key={gdodId}>
-                        <StickyTableCell>{uniqueGdods[gdodId]}</StickyTableCell>
+                        <StickyTableCell>
+                            <Typography variant="h6">{uniqueGdods[gdodId]}</Typography>
+                        </StickyTableCell>
                         {Object.keys(magadData).map(rowHeader => (
                             <CenteredTableCell key={rowHeader}>
                                 <FormattedData data={magadData[rowHeader].items[gdodId]}/>
