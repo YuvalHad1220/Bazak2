@@ -5,7 +5,8 @@ import {
 } from "react-router-dom";
 import MainLayout from "./Layouts/MainLayout";
 import PATHS from "./paths";
-import Form from "./Components/Form";
+import ZminotView from "./Views/Zminot";
+import ZminotTatYehidotView from "./Views/ZminotTatYehidot";
 
 function App() {
   const router = createBrowserRouter([
@@ -16,7 +17,7 @@ function App() {
       children: [
         {
           path: PATHS.DASHBOARD,
-          element: <Form />
+          element: "home"
         },
         {
           path: PATHS.SIGN_IN,
@@ -32,11 +33,11 @@ function App() {
         },
         {
           path: PATHS.SUB_UNIT_ZMINOT,
-          element: "Sub Unit",
+          element: <ZminotTatYehidotView />
         },
         {
           path: PATHS.ZMINOT_TABLE,
-          element: "Zminot Table",
+          element: <ZminotView />
         },
         {
           path: PATHS.UNIT_TREE,
