@@ -7,6 +7,7 @@ import MainLayout from "./Layouts/MainLayout";
 import PATHS from "./paths";
 import ZminotView from "./Views/Zminot";
 import ZminotTatYehidotView from "./Views/ZminotTatYehidot";
+import RamamView from "./Views/Ramam";
 
 function App() {
   const router = createBrowserRouter([
@@ -45,7 +46,7 @@ function App() {
         },
         {
           path: PATHS.RAMAM_TABLE,
-          element: "Ramam Table"
+          element: <RamamView />
         },
         {
           path: PATHS.TKINOT_HAZANOT,

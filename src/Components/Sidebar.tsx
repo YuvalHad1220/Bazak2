@@ -30,7 +30,7 @@ const Sidebar: React.FC<iSidebar> = ({navSections}) => {
 
 
   const NavItem = ({item} : {item: iNavItem}) => (
-    <NavLink to={item.to} style={{textDecoration: "none", color: "inherit"}}>
+    <NavLink to={item.to}>
       {isActive => (
         <Button component={Box} href={item.to} fullWidth variant={isActive.isActive ? "contained" : "text"} color={isActive.isActive ? "primary" : "inherit"}>
           <item.Icon />

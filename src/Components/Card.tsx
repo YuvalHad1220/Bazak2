@@ -1,4 +1,4 @@
-import { Paper, SxProps } from "@mui/material";
+import { Paper, SxProps,  } from "@mui/material";
 import { ReactNode } from "react";
 
 interface iCard {
