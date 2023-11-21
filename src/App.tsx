@@ -10,6 +10,7 @@ import ZminotTatYehidotView from "./Views/ZminotTatYehidot";
 import RamamView from "./Views/Ramam";
 import UnitTreeView from "./Views/UnitTree";
 import DashboardView from "./Views/Dashboard";
+import ManageView from "./Views/Manage";
 
 function App() {
   const router = createBrowserRouter([
@@ -56,7 +57,7 @@ function App() {
         },
         {
           path: PATHS.SYSTEM_MANAGEMENT,
-          element: "System Management",
+          element: <ManageView />
         },
         {
           path: PATHS.ABOUT,

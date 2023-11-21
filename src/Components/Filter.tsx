@@ -1,8 +1,7 @@
-import { Box, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
+import { Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
 import Card from "./Card";
 import { iSelectable } from "../interfaces";
 import MultiSelect from "./MultiSelect";
-import { signal, useSignal } from "@preact/signals-react";
 import { useState } from "react";
 
 type tFlterField = "TOGGLE" | "MULTISELECT";
@@ -30,13 +29,12 @@ type iFilter = iToggleFilter | iMultiSelectFilter;
 
 const parseMultiSelect = (field: iMultiSelectFilter) => {
     return (
-        <MultiSelect options={field.options} title={field.title} onChange={console.log}/>
+        <MultiSelect options={field.options} title={field.title} onChange={(data: string[]) => console.log(data)}/>
     );
 }
 
 const parseToggle = (field: iToggleFilter) => {
-    // const filterState = signal<{ [key: string]: boolean }>({});
-    const [filter, setFilter] = useState<Set<string>>(new Set(field.defaultValues ? field.defaultValues.map(item => item.id) : []));
+    const [filter, setFilter] = useState<Set<string>>(new Set(field.defaultValues?.map(item => item.id)));
     const isAllChekced = filter.size === field.options.length;
     const onSelectAll = () => {
       if (isAllChekced){

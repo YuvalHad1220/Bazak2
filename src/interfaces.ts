@@ -13,7 +13,7 @@ export interface iNavItem {
   }
   
 export interface iNavSection {
-    title: string,
+    text: string,
     to: string,
     items: iNavItem[]
   }
