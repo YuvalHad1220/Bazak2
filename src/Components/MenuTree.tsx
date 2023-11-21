@@ -2,27 +2,65 @@ import { ExpandMore, ChevronLeft } from "@mui/icons-material";
 import { iMenuTreeItem } from "../interfaces";
 import { TreeItem, TreeView, treeItemClasses} from "@mui/x-tree-view";
 import { Box, TextField, Typography, alpha, styled } from "@mui/material";
-import { useState } from "react";
+import { useMemo } from "react";
+import useDebounce from "../hooks/useDecounce";
 
 interface iMenuTree {
     data: iMenuTreeItem
 }
-const MenuTree: React.FC<iMenuTree> = ({data}) => {
-    const [search, setSearch] = useState<string>("");
-    const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
-        [`& .${treeItemClasses.iconContainer}`]: {
-          '& .close': {
-            opacity: 0.3,
-          },
+// creates a styled tree item component
+const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
+    [`& .${treeItemClasses.iconContainer}`]: {
+        '& .close': {
+        opacity: 0.3,
         },
-        [`& .${treeItemClasses.group}`]: {
-          marginLeft: 15,
-          paddingLeft: 18,
-          borderLeft: `3px solid ${alpha(theme.palette.text.primary, 0.1)}`,
-        },
-      }));
+    },
+    [`& .${treeItemClasses.group}`]: {
+        marginLeft: 15,
+        paddingLeft: 18,
+        borderLeft: `3px solid ${alpha(theme.palette.text.primary, 0.1)}`,
+    },
+    }));
 
-
+// iterates over tree and gets all IDs
+const getAllNodeIds = (item: iMenuTreeItem | null): string[] => {
+    if (!item)
+        return [];
+    const nodeIds: string[] = [item.to];
+    if (Array.isArray(item.items)) {
+        item.items.forEach((subItem) => {
+        const subNodeIds = getAllNodeIds(subItem);
+        nodeIds.push(...subNodeIds);
+        });
+    }
+    return nodeIds;
+    };
+    // filters a tree based on the value provided
+const filterTree = (node: iMenuTreeItem, searchTerm: string): iMenuTreeItem | null => {
+    const hasChildren = node.items && node.items.length > 0;
+    
+    if (node.title.includes(searchTerm)) {
+        // If the current node includes the string, return it and all its children
+        return node;
+    }
+    
+    // If the current node does not include the string, iterate to the next node
+    const filteredItems = hasChildren
+        ? (node.items || []).map((item) => filterTree(item, searchTerm)).filter((item) => item !== null) as iMenuTreeItem[]
+        : [];
+    
+    return filteredItems.length > 0
+        ? {
+            ...node,
+            items: filteredItems,
+        }
+        : null;
+};
+    
+const MenuTree: React.FC<iMenuTree> = ({data}) => {    
+    const [_, searchDebouncedValue, setSearch] = useDebounce<string>("", 200);
+    
+    // renders menu tree item
     const MenuTreeItem: React.FC<{ item: iMenuTreeItem }> = ({ item }) => {
         const hasChildren = item.items && item.items.length > 0;
 
@@ -33,60 +71,26 @@ const MenuTree: React.FC<iMenuTree> = ({data}) => {
               </StyledTreeItem>
         )
     }
-    const getAllNodeIds = (item: iMenuTreeItem | null): string[] => {
-        if (!item)
-            return [];
-        const nodeIds: string[] = [item.to];
-        if (Array.isArray(item.items)) {
-          item.items.forEach((subItem) => {
-            const subNodeIds = getAllNodeIds(subItem);
-            nodeIds.push(...subNodeIds);
-          });
-        }
-        return nodeIds;
-      };
 
+    const filteredTree = useMemo(() => filterTree(data, searchDebouncedValue), [data, searchDebouncedValue]);
+    const nodeIds = useMemo(() => getAllNodeIds(filteredTree), [filteredTree]);
+    const memodTree = useMemo(() => (
+        filteredTree && 
+            <TreeView 
+            defaultExpanded={nodeIds}
+            defaultCollapseIcon={<ExpandMore style={{fontSize: "200%"}} />} 
+            defaultExpandIcon={<ChevronLeft style={{fontSize: "200%"}}/>}
+            onNodeToggle={undefined}
+            onNodeSelect={undefined}>
+                <MenuTreeItem item={filteredTree} />
+            </TreeView>
+        
+    ), [filteredTree])
 
-      const filterTree = (node: iMenuTreeItem, searchTerm: string): iMenuTreeItem | null => {
-        const hasChildren = node.items && node.items.length > 0;
-      
-        if (node.title.includes(searchTerm)) {
-          // If the current node includes the string, return it and all its children
-          return node;
-        }
-      
-        // If the current node does not include the string, iterate to the next node
-        const filteredItems = hasChildren
-          ? (node.items || []).map((item) => filterTree(item, searchTerm)).filter((item) => item !== null) as iMenuTreeItem[]
-          : [];
-      
-        return filteredItems.length > 0
-          ? {
-              ...node,
-              items: filteredItems,
-            }
-          : null;
-      };
-      
-      
-
-    const filteredTree = filterTree(data, search);
-    const nodeIds = getAllNodeIds(filteredTree);
-
-      
     return (
         <Box sx={{display: "flex", flexDirection: "column", gap: 4, padding: 3}}>
             <TextField size="small" fullWidth label="חיפוש" placeholder="אנא הקלד שם יחידה" onChange={(event) => setSearch(event?.target.value)}/>
-            {filteredTree && 
-                <TreeView 
-                defaultExpanded={nodeIds}
-                defaultCollapseIcon={<ExpandMore style={{fontSize: "200%"}} />} 
-                defaultExpandIcon={<ChevronLeft style={{fontSize: "200%"}}/>}
-                onNodeToggle={undefined}
-                onNodeSelect={undefined}>
-                    <MenuTreeItem item={filteredTree} />
-                </TreeView>
-            }
+            {memodTree}
         </Box>
 
     );

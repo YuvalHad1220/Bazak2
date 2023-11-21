@@ -4,8 +4,8 @@ import { iMenuTreeItem } from "../interfaces";
 
 const UnitTreeView = () => {
     const data: iMenuTreeItem = {
-        title: "כל המאגדים",
-        to: "/all-units",
+        title: "תפריט ראשי",
+        to: "/main-menu",
         items: [
           {
             title: "טכנולוגיות",
@@ -100,11 +100,9 @@ const UnitTreeView = () => {
                 ]
               }
             ]
-          }
-          // Add more items as needed
+          },
         ]
       };
-
     return (
         <Card sx={{height: "100%"}}>
             <MenuTree data={data}/>
