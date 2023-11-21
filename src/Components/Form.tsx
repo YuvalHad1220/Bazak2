@@ -1,8 +1,8 @@
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import Card from "./Card";
-import { Autocomplete, Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
+import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { iButtonField, iDynamicListField, iField, iMultipleSelectField, iSelectField, iTextField } from "../interfaces";
 import React from "react";
+import MultiSelect from "./MultiSelect";
 
 
 interface iForm {
@@ -11,7 +11,6 @@ interface iForm {
 
 const Form: React.FC<iForm> = ({fields}) => {
     const { register, handleSubmit, getValues, control, trigger, formState: {errors}, getFieldState } = useForm({reValidateMode: "onSubmit"});
-    console.log("rerender");
 
     const parseTextField = (field: iTextField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}` : field.id;
@@ -100,17 +99,10 @@ const Form: React.FC<iForm> = ({fields}) => {
                 name={fullFieldId}
                 control={control}
                 render={({ field: { onChange, ..._field } }) => (
-                    <Autocomplete
-                        multiple
-                        disableCloseOnSelect
-                        forcePopupIcon
-                        filterSelectedOptions
-                        freeSolo
-                        options={field.options.map(item => item.value)}
-                        onChange={(_, data) => onChange(data)}
-                        renderInput={(params) => (<TextField {...params} label={field.title} inputProps={{...params.inputProps, readOnly: true,}}/>)}
-                        defaultValue={field.defaultSelectedValues?.map(item => item.value)}
-                        size="small"
+                    <MultiSelect
+                        title={field.title}
+                        options={field.options}
+                        onChange={(_: any, data: any) => onChange(data)}
                         {..._field}
                     />
             )}
@@ -126,6 +118,7 @@ const Form: React.FC<iForm> = ({fields}) => {
             case "TITLE": return <Typography textAlign="center" variant="h6">{field.title}</Typography>
             case "DYNAMIC_LIST": return parseDynamicField(field as iDynamicListField, parent);
             case "MULTI_SELECT": return parseMultiSelect(field as iMultipleSelectField, parent);
+            default: return null;
         }
     }
 

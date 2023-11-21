@@ -2,7 +2,7 @@ import { FunctionComponent, SVGProps } from "react"
 import { RegisterOptions } from "react-hook-form";
 
 export interface iSelectable {
-  id: string | number,
+  id: string,
   value: string
 }
 

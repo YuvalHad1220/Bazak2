@@ -9,6 +9,7 @@ import ZminotView from "./Views/Zminot";
 import ZminotTatYehidotView from "./Views/ZminotTatYehidot";
 import RamamView from "./Views/Ramam";
 import UnitTreeView from "./Views/UnitTree";
+import DashboardView from "./Views/Dashboard";
 
 function App() {
   const router = createBrowserRouter([
@@ -19,7 +20,7 @@ function App() {
       children: [
         {
           path: PATHS.DASHBOARD,
-          element: "home"
+          element: <DashboardView />
         },
         {
           path: PATHS.SIGN_IN,
