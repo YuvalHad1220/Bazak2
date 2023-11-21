@@ -13,13 +13,15 @@ export interface iNavItem {
   }
   
 export interface iNavSection {
-    text: string,
+    title: string,
+    to: string,
     items: iNavItem[]
   }
   
 
 export interface iMenuTreeItem {
-  text: string,
+  title: string,
+  to: string,
   items?: iMenuTreeItem[]
 }
 

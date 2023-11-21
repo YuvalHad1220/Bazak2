@@ -8,6 +8,7 @@ import PATHS from "./paths";
 import ZminotView from "./Views/Zminot";
 import ZminotTatYehidotView from "./Views/ZminotTatYehidot";
 import RamamView from "./Views/Ramam";
+import UnitTreeView from "./Views/UnitTree";
 
 function App() {
   const router = createBrowserRouter([
@@ -42,7 +43,7 @@ function App() {
         },
         {
           path: PATHS.UNIT_TREE,
-          element: "Unit Tree Table",
+          element: <UnitTreeView />
         },
         {
           path: PATHS.RAMAM_TABLE,
