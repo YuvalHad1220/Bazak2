@@ -1,5 +1,7 @@
 import Card from "../Components/Card";
+import Filter from "../Components/Filter";
 import Form from "../Components/Form";
+import { iField } from "../interfaces";
 
 const fields: iField[] = [
     {
@@ -290,6 +292,7 @@ const ZminotView = () => {
     return (
         <Card sx={{height: "100%"}}>
             <Form fields={fields}/>
+            <Filter />
         </Card>
     )
 };
