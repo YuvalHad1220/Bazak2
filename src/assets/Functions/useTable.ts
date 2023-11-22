@@ -1,11 +1,4 @@
-/*
-    a function to get data and return a table object,
-    with pagination and filters
-
-    will get columns, table, default rows
-*/
-
-import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, sortingFns, useReactTable } from "@tanstack/react-table"
+import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react";
 import { ColumnsType } from "../../interfaces";
 
@@ -48,7 +41,6 @@ const createTanstackTable = <T>(data: T[], columns: ColumnsType<T>[], defaultRow
 
     const newCoulmns = useMemo(() => columns.map(onColumn), [columns]) as ColumnDef<T>[];
 
-    
     const table = useReactTable<T>({
         data,
         columns: newCoulmns,
@@ -60,7 +52,7 @@ const createTanstackTable = <T>(data: T[], columns: ColumnsType<T>[], defaultRow
             pagination: {
                 pageIndex: 0,
                 pageSize: defaultRows ? defaultRows : 20
-            }
+            },
         },
         enableFilters: true,
         enableSorting: true,

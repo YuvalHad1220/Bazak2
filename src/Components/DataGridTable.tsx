@@ -2,7 +2,7 @@
 // will take care of pagination and rendering
 // wont control how we sort, search or filter (that will be controlled by header)
 
-import { Box, Button, Table, TableBody, TableCell, TableCellProps, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
+import { Box, Button, Table, TableBody, TableCell, TableCellProps, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
 import { Header, Table as TanstackTable, flexRender } from "@tanstack/react-table";
 
 interface iTable<T> {
@@ -33,29 +33,33 @@ const DataGridTable: React.FC<iTable<any>> = ({ regularCellProps, headerCellProp
         )
     }
     return (
-        <Box>
-            <TextField  label="חיפוש גלובלי" onChange={(event) => table.setGlobalFilter(event.target.value)}/>
-            <Button variant="contained" onClick={handleColumnSort}>לחץ עליי ככה שאציג רק תאריכים מעל ה19.11.23</Button>
+        <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
+            <TextField  label="חיפוש גלובלי" size="small" onChange={(event) => table.setGlobalFilter(event.target.value)}/>
+            {/* <Button variant="contained" onClick={handleColumnSort}>לחץ עליי ככה שאציג רק תאריכים מעל ה19.11.23</Button> */}
+            {/* <Button variant="contained" size="small" onClick={() => {table.setColumnVisibility({sadir: false})}}>לחץ עליי בשביל להסתיר את הסדיר לא סדיר</Button> */}
+            <Box sx={{height: "100%", overflowY: "auto"}}>
             <Table stickyHeader>
-                <TableHead>
-                    {table.getHeaderGroups().map(headerGroup => (
-                        <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map(header => (
-                                HeaderRenderer(header)
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableHead>
-                <TableBody>
-                    {table.getRowModel().rows.map(row => (
-                        <TableRow key={row.id}>
-                            {row.getVisibleCells().map(cell => (
-                                <TableCell key={cell.id} {...regularCellProps}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    <TableHead>
+                        {table.getHeaderGroups().map(headerGroup => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map(header => (
+                                    HeaderRenderer(header)
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableHead>
+                    <TableBody>
+                        {table.getRowModel().rows.map(row => (
+                            <TableRow key={row.id}>
+                                {row.getVisibleCells().map(cell => (
+                                    <TableCell key={cell.id} {...regularCellProps}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+
+            </Box>
             <TablePagination
                 component="div"
                 count={table.getPrePaginationRowModel().rows.length}
