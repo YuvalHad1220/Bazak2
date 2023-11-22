@@ -2,7 +2,7 @@
 // will take care of pagination and rendering
 // wont control how we sort, search or filter (that will be controlled by header)
 
-import { Box, Table, TableBody, TableCell, TableCellProps, TableHead, TablePagination, TableRow } from "@mui/material";
+import { Box, Button, Table, TableBody, TableCell, TableCellProps, TableHead, TablePagination, TableRow, TextField } from "@mui/material";
 import { Table as TanstackTable, flexRender } from "@tanstack/react-table";
 
 interface iTable<T> {
@@ -14,11 +14,18 @@ interface iTable<T> {
 }
 
 const DataGridTable: React.FC<iTable<any>> = ({ regularCellProps, headerCellProps, table, pageSizeOptions = [10,20,30,40,50], }) => {
-    console.log("page count:", table.getPageCount());
-    console.log("current page index: ", table.getState().pagination.pageIndex);
-    console.log("current rows per page: ", table.getState().pagination.pageSize);
+    const handleColumnSort = () => {
+        table.setColumnFilters([{
+            id: "lastUpdateDate",
+            value: new Date('2023-11-19'),
+        }]);
+
+    }
+
     return (
         <Box>
+            <TextField  label="חיפוש גלובלי" onChange={(event) => table.setGlobalFilter(event.target.value)}/>
+            <Button variant="contained" onClick={handleColumnSort}>לחץ עליי ככה שאציג רק תאריכים מעל ה19.11.23</Button>
             <Table stickyHeader>
                 <TableHead>
                     {table.getHeaderGroups().map(headerGroup => (

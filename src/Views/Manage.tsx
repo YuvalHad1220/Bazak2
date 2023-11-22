@@ -16,23 +16,39 @@ interface iMilitaryUser {
   function generateRandomMilitaryUsers(count: number): iMilitaryUser[] {
     const getRandomString = (): string => Math.random().toString(36).substring(7);
   
+    // Function to generate a random date within a specific range
+    const getRandomDate = (startDate: Date, endDate: Date): Date => {
+      const startTimestamp = startDate.getTime();
+      const endTimestamp = endDate.getTime();
+      const randomTimestamp = startTimestamp + Math.random() * (endTimestamp - startTimestamp);
+      return new Date(randomTimestamp);
+    };
+  
+    // Define the date range (31/10/23 - 3/3/24)
+    const startDate = new Date('2023-10-31');
+    const endDate = new Date('2024-03-03');
+  
     return Array.from({ length: count }, () => ({
       command: getRandomString(),
       brigade: getRandomString(),
       division: getRandomString(),
       sadir: Math.random() < 0.5,
-      lastUpdateDate: new Date(),
+      lastUpdateDate: getRandomDate(startDate, endDate),
       valid: Math.random() < 0.5,
     }));
   }
   
+  type CustomColumnDef<T> = ColumnDef<T> & {
+    type: "DATE" | "BOOLEAN" | "ARRAY" | "STRING";
+};
+
 const ManageView = () => {
-    const data = useMemo(() => generateRandomMilitaryUsers(900), []);
+    const data = useMemo(() => generateRandomMilitaryUsers(6), []);
     const columns = useMemo(() => {
         return [
             {
-            accessorKey: 'command',
-            header: 'מפקד',
+                accessorKey: 'command',
+                header: 'מפקד',
             },
             {
             accessorKey: 'brigade',
@@ -43,26 +59,27 @@ const ManageView = () => {
             header: 'גדוד', // החלף בתרגום המתאים אם נדרש
             },
             {
-            accessorKey: 'sadir',
+            accessorFn: row => row.sadir ? "סדיר" : "לא סדיר",
+            id: 'sadir',
             header: 'סדיר',
-            cell: cell => cell.getValue() ? "סדיר" : "לא סדיר"
 
             },
             {
-            accessorKey: 'lastUpdateDate',
-            header: 'תאריך עדכון אחרון',
-            cell: cell => (cell.getValue() as Date).toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "numeric",
-                year: "numeric"
-              })
+                accessorKey: 'lastUpdateDate',
+                id: 'lastUpdateDate',
+                type: "DATE",
+                header: 'תאריך עדכון אחרון',
+                filterFn: (date, valueRecieved) => {
+                    return date > valueRecieved;
+                }
             },
             {
-            accessorKey: 'valid',
+            // accessorKey: 'valid',
             header: 'תקין',
-            cell: cell => cell.getValue() ? "תקין" : "לא תקין"
+            accessorFn: row => row.valid ? "תקין" : "לא תקין",
+            cell: cell => <div style={{backgroundColor: cell.getValue() === "תקין" ? "green" : "red"}}>{cell.getValue() as string}</div>
             },
-        ] as ColumnDef<iMilitaryUser>[];
+        ] as CustomColumnDef<iMilitaryUser>[];
 
     }, []);
     const table = createTanstackTable<iMilitaryUser>(data, columns);

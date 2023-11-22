@@ -1,3 +1,4 @@
+import { ColumnDef } from "@tanstack/react-table";
 import { FunctionComponent, SVGProps } from "react"
 import { RegisterOptions } from "react-hook-form";
 
@@ -79,3 +80,9 @@ export interface iDynamicListField extends iBasicField {
 }
 
 export type iField = iTextField | iButtonField | iMultipleSelectField | iSelectField;
+
+  
+export type CustomColumnDef<T> = ColumnDef<T> & {
+  type: "DATE" | "BOOLEAN" | "ARRAY" | "STRING";
+  filterFn: (value: unknown, valueFromFilter: unknown) => boolean,
+};
