@@ -27,7 +27,7 @@ interface iMilitaryUser {
   }
   
 const ManageView = () => {
-    const data = useMemo(() => generateRandomMilitaryUsers(300), []);
+    const data = useMemo(() => generateRandomMilitaryUsers(900), []);
     const columns = useMemo(() => {
         return [
             {
@@ -65,9 +65,7 @@ const ManageView = () => {
         ] as ColumnDef<iMilitaryUser>[];
 
     }, []);
-    const table = createTanstackTable<iMilitaryUser>(data, columns, 30, true);
-
-    console.log(data, columns);
+    const table = createTanstackTable<iMilitaryUser>(data, columns);
 
     return (
         <Card sx={{height: "100%"}}>
