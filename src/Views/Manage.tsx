@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import Card from "../Components/Card";
 import DataGridTable from "../Components/DataGridTable";
 import createTanstackTable from "../assets/Functions/useTable";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnsType } from "../interfaces";
 
 interface iMilitaryUser {
     command: string;
@@ -38,12 +38,9 @@ interface iMilitaryUser {
     }));
   }
   
-  type CustomColumnDef<T> = ColumnDef<T> & {
-    type: "DATE" | "BOOLEAN" | "ARRAY" | "STRING";
-};
 
 const ManageView = () => {
-    const data = useMemo(() => generateRandomMilitaryUsers(6), []);
+    const data = useMemo(() => generateRandomMilitaryUsers(400), []);
     const columns = useMemo(() => {
         return [
             {
@@ -66,10 +63,9 @@ const ManageView = () => {
             },
             {
                 accessorKey: 'lastUpdateDate',
-                id: 'lastUpdateDate',
-                type: "DATE",
+                type: "Date",
                 header: 'תאריך עדכון אחרון',
-                filterFn: (date, valueRecieved) => {
+                filterFn: (date: Date, valueRecieved: Date) => {
                     return date > valueRecieved;
                 }
             },
@@ -79,7 +75,7 @@ const ManageView = () => {
             accessorFn: row => row.valid ? "תקין" : "לא תקין",
             cell: cell => <div style={{backgroundColor: cell.getValue() === "תקין" ? "green" : "red"}}>{cell.getValue() as string}</div>
             },
-        ] as CustomColumnDef<iMilitaryUser>[];
+        ] as ColumnsType<iMilitaryUser>[];
 
     }, []);
     const table = createTanstackTable<iMilitaryUser>(data, columns);

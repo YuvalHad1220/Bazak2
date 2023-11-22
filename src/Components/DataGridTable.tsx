@@ -2,8 +2,8 @@
 // will take care of pagination and rendering
 // wont control how we sort, search or filter (that will be controlled by header)
 
-import { Box, Button, Table, TableBody, TableCell, TableCellProps, TableHead, TablePagination, TableRow, TextField } from "@mui/material";
-import { Table as TanstackTable, flexRender } from "@tanstack/react-table";
+import { Box, Button, Table, TableBody, TableCell, TableCellProps, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
+import { Header, Table as TanstackTable, flexRender } from "@tanstack/react-table";
 
 interface iTable<T> {
     regularCellProps?: TableCellProps,
@@ -19,9 +19,19 @@ const DataGridTable: React.FC<iTable<any>> = ({ regularCellProps, headerCellProp
             id: "lastUpdateDate",
             value: new Date('2023-11-19'),
         }]);
-
     }
 
+    const HeaderRenderer = (header: Header<any, unknown>) => {
+        const isSorted = header.column.getIsSorted();        
+        const nextStateFunc = () => isSorted === "desc" ? header.column.toggleSorting(false) : isSorted === "asc" ? header.column.clearSorting() : header.column.toggleSorting(true);
+        return (
+            <TableCell key={header.id} onClick={nextStateFunc} {...headerCellProps}>
+                <TableSortLabel active={isSorted !== false} direction={isSorted === "asc" ? "asc" : "desc"}>
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                </TableSortLabel>
+            </TableCell>
+        )
+    }
     return (
         <Box>
             <TextField  label="חיפוש גלובלי" onChange={(event) => table.setGlobalFilter(event.target.value)}/>
@@ -31,7 +41,7 @@ const DataGridTable: React.FC<iTable<any>> = ({ regularCellProps, headerCellProp
                     {table.getHeaderGroups().map(headerGroup => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map(header => (
-                                <TableCell key={header.id} {...headerCellProps}>{flexRender(header.column.columnDef.header, header.getContext())}</TableCell>
+                                HeaderRenderer(header)
                             ))}
                         </TableRow>
                     ))}

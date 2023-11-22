@@ -5,29 +5,40 @@
     will get columns, table, default rows
 */
 
-import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
+import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, sortingFns, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react";
-type CustomColumnDef<T> = ColumnDef<T> & {
-    type: "DATE" | "BOOLEAN" | "ARRAY" | "STRING";
-};
+import { ColumnsType } from "../../interfaces";
 
-const createTanstackTable = <T>(data: T[], columns: CustomColumnDef<T>[], defaultRows?: number, debug: boolean = false) => {
+const dateStringToDate = (dateStr: string) : Date => {
+    const [day, month, year] = dateStr.split('.');
+    // Convert to a valid date format (mm/dd/yyyy)
+    const formattedDateString = `${month}/${day}/${year}`;
+    // Create a Date object
+    return new Date(formattedDateString);
+} 
 
-    const onColumn = (column: CustomColumnDef<T>) => {
-        if (column.type === "DATE") {
+const createTanstackTable = <T>(data: T[], columns: ColumnsType<T>[], defaultRows?: number, debug: boolean = false) => {
+    const onColumn = (column: ColumnsType<T>) => {
+        if (column.type === "Date") {
             return {
-                accessorFn: row => <T>(row[column.accessorKey] as Date).toLocaleDateString("en-GB", {
+                accessorFn: row => (row[column.accessorKey] as Date).toLocaleDateString("he-IL", {
                     day: "numeric",
                     month: "numeric",
                     year: "numeric"
                 }),
-                id: column.id,
+                id: column.accessorKey,
                 header: column.header,
                 filterFn: (row, coulmnId, valueRecieved) => {
-                    const date = new Date(row[coulmnId]);
-                    return column.filterFn(date, valueRecieved);
-                }            
-            }
+                    const date = dateStringToDate(row.getValue(coulmnId));
+                    return column.filterFn ? column.filterFn(date, valueRecieved) : true;
+                },
+                sortingFn: (rowA, rowB, columnId) => {
+                    const dateA = dateStringToDate(rowA.getValue(columnId));
+                    const dateB = dateStringToDate(rowB.getValue(columnId));
+                    return dateA > dateB ? 1 : -1;
+                    
+                },
+            } as ColumnDef<T>;
         }
         else {
             return column;
@@ -35,7 +46,7 @@ const createTanstackTable = <T>(data: T[], columns: CustomColumnDef<T>[], defaul
     }
 
 
-    const newCoulmns = useMemo(() => columns.map(onColumn), [columns]);
+    const newCoulmns = useMemo(() => columns.map(onColumn), [columns]) as ColumnDef<T>[];
 
     
     const table = useReactTable<T>({
@@ -44,6 +55,7 @@ const createTanstackTable = <T>(data: T[], columns: CustomColumnDef<T>[], defaul
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         initialState: {
             pagination: {
                 pageIndex: 0,

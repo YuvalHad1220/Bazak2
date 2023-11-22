@@ -1,5 +1,5 @@
-import { ColumnDef } from "@tanstack/react-table";
-import { FunctionComponent, SVGProps } from "react"
+import { Cell } from "@tanstack/react-table";
+import { FunctionComponent, ReactNode, SVGProps } from "react"
 import { RegisterOptions } from "react-hook-form";
 
 export interface iSelectable {
@@ -81,8 +81,11 @@ export interface iDynamicListField extends iBasicField {
 
 export type iField = iTextField | iButtonField | iMultipleSelectField | iSelectField;
 
-  
-export type CustomColumnDef<T> = ColumnDef<T> & {
-  type: "DATE" | "BOOLEAN" | "ARRAY" | "STRING";
-  filterFn: (value: unknown, valueFromFilter: unknown) => boolean,
-};
+export type ColumnsType<T> = {
+  header: string,
+  accessorKey?: string,
+  type?: "Date" | "String" | "Array",
+  accessorFn?: (row: T) => string,
+  cell?: (cell: Cell<T, unknown>) => ReactNode,
+  filterFn?: (value: any, valueFromFilter: any) => boolean,
+}
