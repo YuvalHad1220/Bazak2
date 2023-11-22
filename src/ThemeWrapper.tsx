@@ -59,14 +59,18 @@ const cacheRtl = createCache({
       main: "#FCFF60"
     },
     success: {
-      main: "#9DDB36"
+      main: "#00D389"
     },
     error: {
-      main: "#E5392A"
+      main: "#FF5861"
     },
     warning: {
-      main: "#EF6C00"
-    }
+      main: "#FFBE00"
+    },
+    background: {
+      default: "#15191E",
+      paper: "#191E24"
+    },
  };
 
 const theme = createTheme({
