@@ -15,7 +15,6 @@ export interface iNavItem {
   
 export interface iNavSection {
     text: string,
-    to: string,
     items: iNavItem[]
   }
   

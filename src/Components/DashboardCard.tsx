@@ -1,11 +1,8 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Divider, Typography, useTheme } from "@mui/material";
 import Card from "./Card";
-import { useState } from "react";
 import ProgressCircular from "./ProgressCircular";
 import ProgressVerticalLine from "./ProgressVerticalLine";
 import ProgressLine from "./ProgressLine";
-
-
 
 interface iDashboardCard {
     redThres?: number,
@@ -14,7 +11,14 @@ interface iDashboardCard {
     upperDescription?: string,
     trueCount: number,
     falseCount: number,
-    lowerDescription?: string[]
+    lowerDescription?: string[],
+    tipulCount: number,
+    tipulHHCount: number,
+    harigTipulCount: number,
+    harigTipulHHCount: number,
+    mizdamenetCount: number,
+    mizdamenetHHCount: number, 
+    
 }
 const DashboardCard: React.FC<iDashboardCard> = ({title, upperDescription, lowerDescription, redThres = 40, yellowThres = 80, trueCount, falseCount}) => {
     const theme = useTheme();
@@ -27,7 +31,7 @@ const DashboardCard: React.FC<iDashboardCard> = ({title, upperDescription, lower
                 <ProgressCircular trueCount={trueCount} falseCount={falseCount} yellowThres={yellowThres} redThres={redThres} />
                 <ProgressVerticalLine yellowThres={yellowThres} redThres={redThres} />
             </Box>
-            <Box sx={{display: "flex", gap: 2}}>
+            <Box sx={{display: "flex", gap: 1}}>
                 {lowerDescription?.map(label => <Chip key={label} size="small" label={label}/>)}
             </Box>
 
@@ -55,14 +59,14 @@ const DashboardCard: React.FC<iDashboardCard> = ({title, upperDescription, lower
     );
 
     return (
-            <Accordion component={(props) => <Card {...props} sx={{bgcolor: theme.palette.background.default, display: "flex", flexDirection: "column", justifyContent: "center"}}/>}>
-                <AccordionSummary sx={{width: "100%"}}>
-                    {mainData}
-                </AccordionSummary>
-                <AccordionSummary>
-                    {whenOpenData}
-                </AccordionSummary>
-            </Accordion>
+        <Accordion disableGutters component={(props) => <Card {...props} sx={{bgcolor: theme.palette.background.default, display: "flex", flexDirection: "column", justifyContent: "center"}}/>}>
+            <AccordionSummary>
+                {mainData}
+            </AccordionSummary>
+            <AccordionDetails>
+                {whenOpenData}
+            </AccordionDetails>
+        </Accordion>
     
     );
 };
