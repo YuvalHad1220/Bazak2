@@ -1,11 +1,9 @@
-import { Box, Chip, Divider, Typography, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Divider, Typography, useTheme } from "@mui/material";
 import Card from "./Card";
 import { useState } from "react";
 import ProgressCircular from "./ProgressCircular";
 import ProgressVerticalLine from "./ProgressVerticalLine";
 import ProgressLine from "./ProgressLine";
-
-
 
 
 
@@ -19,18 +17,17 @@ interface iDashboardCard {
     lowerDescription?: string[]
 }
 const DashboardCard: React.FC<iDashboardCard> = ({title, upperDescription, lowerDescription, redThres = 40, yellowThres = 80, trueCount, falseCount}) => {
-    const [isOpen, setOpen] = useState(false);
     const theme = useTheme();
 
     const mainData = (
         <Box sx={{display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", alignItems: "center", gap: 1.3}}>
             <Typography fontWeight="bold" variant="h6">{title}</Typography>
             <Typography sx={{color: theme => theme.palette.text.secondary}}>{upperDescription}</Typography>
-            <Box sx={{display: "flex", height: "130px"}} onClick={() => setOpen(prev => !prev)}>
+            <Box sx={{display: "flex", height: "130px"}}>
                 <ProgressCircular trueCount={trueCount} falseCount={falseCount} yellowThres={yellowThres} redThres={redThres} />
                 <ProgressVerticalLine yellowThres={yellowThres} redThres={redThres} />
             </Box>
-            <Box sx={{display: "flex", gap: 2}} onClick={() => setOpen(prev => !prev)}>
+            <Box sx={{display: "flex", gap: 2}}>
                 {lowerDescription?.map(label => <Chip key={label} size="small" label={label}/>)}
             </Box>
 
@@ -57,15 +54,16 @@ const DashboardCard: React.FC<iDashboardCard> = ({title, upperDescription, lower
         </Box>
     );
 
-
-
     return (
-        <Card sx={{bgcolor: theme.palette.background.default}}>
-            {mainData}
-            {isOpen && (
-                whenOpenData
-            )}
-        </Card>
+            <Accordion component={(props) => <Card {...props} sx={{bgcolor: theme.palette.background.default, display: "flex", flexDirection: "column", justifyContent: "center"}}/>}>
+                <AccordionSummary sx={{width: "100%"}}>
+                    {mainData}
+                </AccordionSummary>
+                <AccordionSummary>
+                    {whenOpenData}
+                </AccordionSummary>
+            </Accordion>
+    
     );
 };
 
