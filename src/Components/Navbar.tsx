@@ -15,7 +15,7 @@ export default Navbar;
 
 // will just include title and zminot\kshirot
 const DefaultNavbar = () => {
-
+    
 };
 
 

@@ -17,25 +17,28 @@ interface iProgressLine {
       
     },
   }));
+
+  const StyledTypography = styled(Typography)(({ theme }) => ({
+    position: "absolute",
+    top: "-10%",
+    right: "50%",
+    transform: "translateX(50%)",
+    fontWeight: "bold",
+    fontSize: theme.typography.body2.fontSize
+  }));
+
+  
 const ProgressLine: React.FC<iProgressLine> = ({value, yellowThres, redThres}) => {
     return (
         <Box position="relative">
             <RoundedCapProgress
             variant="determinate" 
             value={value} 
-            sx={{'.MuiLinearProgress-bar': {backgroundColor:theme => value > yellowThres ? theme.palette.success.main : value > redThres ? theme.palette.warning.light : theme.palette.error.main}}} />
+            sx={{'.MuiLinearProgress-bar': {backgroundColor: theme => value > yellowThres ? theme.palette.success.main : value > redThres ? theme.palette.warning.light : theme.palette.error.main}}} />
             
-            <Typography
-            variant="body2"
-            fontWeight="bold"
-            sx={{
-            position: "absolute",
-            top: "-10%",
-            right: "50%",
-            transform: "translateX(50%)"
-            }}>
+            <StyledTypography>
                 {value.toFixed(2)}%
-            </Typography>
+            </StyledTypography>
         </Box>
     )
 };

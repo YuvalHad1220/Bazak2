@@ -1,4 +1,4 @@
-import { Paper, SxProps,  } from "@mui/material";
+import { Box, SxProps, styled,  } from "@mui/material";
 import { ReactNode } from "react";
 
 interface iCard {
@@ -6,17 +6,18 @@ interface iCard {
     sx?: SxProps
 }
 
+const StyledCard = styled(Box)(({theme}) => ({
+    borderRadius: theme.spacing(2),
+    boxShadow: theme.shadows[4],
+    padding: theme.spacing(1.5),
+    backgroundColor: theme.palette.background.paper
+}))
+
 const Card: React.FC<iCard> = ({children, sx}) => {
-    const cardSX: SxProps = {
-        borderRadius: 4,
-        boxShadow: 4,
-        padding: 1.5,
-        ...sx
-    }
     return (
-        <Paper sx={cardSX}>
+        <StyledCard sx={sx}>
             {children}
-        </Paper>
+        </StyledCard>
     )
 };
 
