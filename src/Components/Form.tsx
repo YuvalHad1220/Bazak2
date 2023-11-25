@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from "@mui/x-date-pickers";
 import { heIL } from "@mui/x-date-pickers";
-import he from "dayjs/locale/he"
+import "dayjs/locale/he"
 interface iForm {
     fields: iField[],
     onValidated: (formData: any) => void
@@ -15,12 +15,12 @@ interface iForm {
 
 const Form: React.FC<iForm> = ({fields, onValidated}) => {
     const { register, handleSubmit, getValues, control, trigger, formState: {errors}, getFieldState } = useForm({reValidateMode: "onSubmit"});
-
     const parseTextField = (field: iTextField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}` : field.id;
         return (
                 <TextField size="small" 
                 fullWidth 
+                helperText={errors[field.id]?.message?.toString()}
                 error={errors[field.id] ? true : false} 
                 type={field.inputType} 
                 label={field.title}  
@@ -63,12 +63,12 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
                 select 
                 fullWidth 
                 size="small" 
-                defaultValue={field.defaultValue ? field.defaultValue.value : ''}
+                defaultValue={field.defaultValue ? field.defaultValue.id : ''}
                 label={field.title} 
                 {...(value ? {value} : {}) }
                 disabled={!getValues(dependsOnId!)}
                 inputProps={register(fullFieldId)}>
-                    {field.options.map(selectable => (<MenuItem key={selectable.id} value={selectable.value}>{selectable.value}</MenuItem>))}
+                    {field.options.map(selectable => (<MenuItem key={selectable.id} value={selectable.id}>{selectable.value}</MenuItem>))}
                 </TextField>
         )
 
@@ -116,24 +116,28 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
     const parseDate = (field: iField, parent?: string) => {
         return (
             <Controller
-    name={field.id}
-    control={control}
-    defaultValue={null}
-    render={({
-        field: {onChange, value},
-        fieldState: { error }
-    }) => (
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={he} localeText={heIL.components.MuiLocalizationProvider.defaultProps.localeText}>
-            <DatePicker 
-                label={field.title}
-                value={value}  
-                format="DD/MM/YYYY"
-                onChange={event => onChange(event)}
-                slotProps={{ textField: { error: !!error, helperText: error?.message  } }}
+            name={field.id}
+            control={control}
+            defaultValue={null}
+            render={({
+                field: {onChange, value},
+                fieldState: { error }
+            }) => (
+                <LocalizationProvider
+                dateAdapter={AdapterDayjs} 
+                adapterLocale="he"
+                localeText={heIL.components.MuiLocalizationProvider.defaultProps.localeText}>
+                    <DatePicker 
+                        label={field.title}
+                        value={value}  
+                        reduceAnimations
+                        format="DD/MM/YYYY"
+                        onChange={event => onChange(event)}
+                        slotProps={{ textField: { error: !!error, helperText: error?.message, fullWidth: true  } }}
+                    />
+                </LocalizationProvider>
+            )}
             />
-        </LocalizationProvider>
-    )}
-/>
         )
     }
     console.log('rerender');

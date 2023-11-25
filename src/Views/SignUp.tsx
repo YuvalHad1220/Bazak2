@@ -14,19 +14,40 @@ const SignUpView = () => {
             fieldType: "TEXT_FIELD",
             id: "fName",
             title: "שם פרטי",
-            width: 6
+            width: 6,
+            registerOptions: {
+                required: "שם פרטי דרוש להרשמה"
+            }
         },
         {
             fieldType: "TEXT_FIELD",
             id: "lName",
             title: "שם משפחה",
-            width: 6
+            width: 6,
+            registerOptions: {
+                required: "שם משפחה דרוש להרשמה"
+            }
         },
         {
             fieldType: "TEXT_FIELD",
             id: "pNum",
             title: "מספר אישי",
-            width: 6
+            width: 6,
+            registerOptions: {
+                required: "מספר אישי דרוש להרשמה",
+                minLength: {
+                    value: 8,
+                    message: "מספר אישי חייב להיות בדיוק 7 תווים"
+                },
+                maxLength: {
+                    value: 8,
+                    message: "מספר אישי חייב להיות בדיוק 8 תווים כולל מזהה חוגר"
+                },
+                pattern: {
+                    value: /^(c|s).*/,
+                    message: "מספר אישי חייב להתחיל עם מזהה חוגר, כגון s, c וכו'"
+                }
+            }
         },
         {
             fieldType: "TITLE",
@@ -53,9 +74,19 @@ const SignUpView = () => {
             dependsOn: "permissionType",
             options: [
                 {
-                    id: "test", value:"צריך עדיין להכניס את האופציה של הצגת אופציות לפי מפתח"
+                    id: "admin", value:"צריך עדיין להכניס את האופציה של הצגת אופציות לפי מפתח, כרגע יכניס id = admin"
                 }
             ]
+        },
+        {
+            fieldType: "SELECT",
+            id: "permissions",
+            title: "הרשאות עריכה וצפייה",
+            options: [
+                { id: "editAndView", value: "צפייה ועריכה"},
+                { id: "justView", value: "צפייה בלבד"}
+            ],
+            defaultValue: { id: "justView", value: "צפייה בלבד"}
         },
         {
             fieldType: "DATE",
