@@ -3,6 +3,9 @@ import Card from "../Components/Card";
 import DataGridTable from "../Components/DataGridTable";
 import createTanstackTable from "../assets/Functions/useTable";
 import { ColumnsType } from "../interfaces";
+import { DataGridFooter } from "../Components/Footer";
+import { Box } from "@mui/material";
+import { DataGridNavbar } from "../Components/Navbar";
 
 interface iMilitaryUser {
     command: string;
@@ -81,9 +84,14 @@ const ManageView = () => {
     const table = createTanstackTable<iMilitaryUser>(data, columns);
 
     return (
-        <Card sx={{height: "100%"}}>
-             <DataGridTable table={table} />
+      <Box style={{display: "flex", flexDirection: "column", gap: 16}}>
+        <DataGridNavbar />
+        <Card>
+            <DataGridTable table={table} />
         </Card>
+        <DataGridFooter />
+      </Box>
+
     )
 };
 

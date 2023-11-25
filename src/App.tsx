@@ -11,6 +11,7 @@ import RamamView from "./Views/Ramam";
 import UnitTreeView from "./Views/UnitTree";
 import DashboardView from "./Views/Dashboard";
 import ManageView from "./Views/Manage";
+import SignUpView from "./Views/SignUp";
 
 function App() {
   const router = createBrowserRouter([
@@ -53,7 +54,7 @@ function App() {
         },
         {
           path: PATHS.TKINOT_HAZANOT,
-          element: "Tkinot Hazanot",
+          element: <SignUpView />
         },
         {
           path: PATHS.SYSTEM_MANAGEMENT,

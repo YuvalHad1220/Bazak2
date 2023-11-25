@@ -33,7 +33,7 @@ const DashboardCard: React.FC<iDashboardCard> = ({title, upperDescription, lower
 
 
     const mainData = (
-        <MainDataBox sx={{display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", alignItems: "center", gap: 1.3}}>
+        <MainDataBox>
             <Typography fontWeight="bold" variant="h6">{title}</Typography>
             <Typography sx={{color: theme => theme.palette.text.secondary}}>{upperDescription}</Typography>
             <Box style={{display: "flex", height: "130px"}}>
@@ -74,7 +74,7 @@ const DashboardCard: React.FC<iDashboardCard> = ({title, upperDescription, lower
     );
 
     return (
-        <Accordion disableGutters component={(props) => <Card {...props} sx={{bgcolor: theme.palette.background.default, display: "flex", flexDirection: "column", justifyContent: "center"}}/>}>
+        <Accordion disableGutters component={(props) => <Card {...props}  />}>
             <AccordionSummary>
                 {mainData}
             </AccordionSummary>

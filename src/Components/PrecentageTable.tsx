@@ -81,12 +81,15 @@ const PrecentageTable: React.FC<iPrecentageTable> = ({magadData}) => {
       const displayValue = `${trueCount}/${trueCount + falseCount}`;
 
 
-      const colorClass = percentage < 20 ? 'error.main' : percentage < 80 ? 'warning.main' : 'success.main';
+      const StyledBox = styled(Box)(({theme}) => ({
+        color: percentage < 20 ? theme.palette.error.main : percentage < 80 ? theme.palette.warning.main : theme.palette.success.main
+      }));
+
       return (
-          <Box sx={{color: colorClass}}>
+          <StyledBox>
               <Typography fontWeight="bold">{percentage.toFixed(2)}%</Typography>
               <Typography>{displayValue}</Typography>
-          </Box>
+          </StyledBox>
         );
       };
 
