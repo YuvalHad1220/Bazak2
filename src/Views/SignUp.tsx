@@ -113,11 +113,11 @@ const SignUpView = () => {
             ],
             defaultValue: { id: "justView", value: "צפייה בלבד"}
         },
-        {
-            fieldType: "DATE",
-            id: "signUpDate",
-            title: "תאריך הרשמה (בדיקת דייט פיקר)"
-        }
+        // {
+        //     fieldType: "DATE",
+        //     id: "signUpDate",
+        //     title: "תאריך הרשמה (בדיקת דייט פיקר)"
+        // }
     ];
 
     return (

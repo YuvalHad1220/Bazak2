@@ -8,15 +8,19 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from "@mui/x-date-pickers";
 import { heIL } from "@mui/x-date-pickers";
 import "dayjs/locale/he"
+
 interface iForm {
     fields: iField[],
     onValidated: (formData: any) => void
 }
 
+const getFullDependantId = (field: iField, parent?: string) => field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
+const gettFullFieldId = (field: iField, parent?: string) => parent ? `${parent}.${field.id}` : field.id;
 const Form: React.FC<iForm> = ({fields, onValidated}) => {
-    const { register, handleSubmit, getValues, control, trigger, formState: {errors}, getFieldState } = useForm({reValidateMode: "onSubmit"});
-    const parseTextField = (field: iTextField, parent?: string) => {
-        const fullFieldId = parent ? `${parent}.${field.id}` : field.id;
+    const { register, unregister, handleSubmit, getValues, control, trigger, formState: {errors}, getFieldState } = useForm({reValidateMode: "onSubmit"});
+
+    const AsTextField = ({field, parent}: {field: iTextField, parent?: string}) => {
+        const fullFieldId = gettFullFieldId(field, parent);
         return (
                 <TextField size="small" 
                 fullWidth 
@@ -27,23 +31,25 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
                 {...register(fullFieldId, {...field.registerOptions})} />
         )
     }
-    const parseButtonField = (field: iButtonField, parent?: string) => {
-        const dependsOnId = field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
+
+
+    const AsButtonField = ({field, parent}: {field: iButtonField, parent?: string}) => {
+        const dependsOnId = getFullDependantId(field, parent);
         const onButtonClick = async () => {
-            if (!(field.onAction && dependsOnId)){
-                console.log(field.id, "does not have a dependency function")
-            }
-            await trigger(field.dependsOn);
-            if (getFieldState(field.dependsOn!).error){
+            if (!field.onAction && !dependsOnId) {
+                console.log(`${field.id} does not have a dependency function or a dependant id`);
                 return;
             }
-
-            field.onAction!({value: getValues(dependsOnId!)})
-        }
+            await trigger(dependsOnId);
+            if (dependsOnId && field.onAction && !getFieldState(dependsOnId).error) {
+                field.onAction({ value: getValues(dependsOnId) });
+            }
+        };
         return (
             <Button 
             size="small" 
-            fullWidth sx={{height: "100%"}} 
+            fullWidth 
+            style={{height: "100%"}} 
             type="button" 
             variant="outlined" 
             onClick={onButtonClick}>
@@ -51,39 +57,34 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
             </Button>
         );
     }
-    const parseSelectField = (field: iSelectField, parent?: string) => {
-        const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
-        const dependsOnId = field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
+    const AsSelectField = ({field, parent}: {field: iSelectField, parent?: string})  => {
+        const fullFieldId = gettFullFieldId(field, parent);
+        const dependsOnId = getFullDependantId(field, parent);
         let existingValue = getValues(fullFieldId);
         // triggers watching the state of dependsOn field
         if (dependsOnId)
             useWatch({name: dependsOnId, control});
         
-        if (field.unvisibleWhen?.includes(getValues(dependsOnId!)))
-            return null
-
-        let displayedOptions: iSelectable[] = [];
-        if (Array.isArray(field.options)){
-            displayedOptions = field.options;
+        if (field.unvisibleWhen?.includes(getValues(dependsOnId!))) {
+            return null;
         }
-        else {
-            const selectedValue = getValues(dependsOnId!);
-            if (selectedValue && field.options[selectedValue]){
-                displayedOptions = field.options[selectedValue]
-            }
-        }
+        
+        const displayedOptions: iSelectable[] = Array.isArray(field.options)
+            ? field.options
+            : getValues(dependsOnId!) && field.options[getValues(dependsOnId!)] || [];
+        
 
         return (
-                <TextField 
-                select 
-                fullWidth 
-                size="small" 
-                defaultValue={field.defaultValue ? field.defaultValue.id : existingValue ? existingValue : ''}
-                label={field.title} 
-                disabled={!getValues(dependsOnId!)}
-                inputProps={register(fullFieldId)}>
-                    {displayedOptions.map(selectable => (<MenuItem key={selectable.id} value={selectable.id}>{selectable.value}</MenuItem>))}
-                </TextField>
+            <TextField 
+            select 
+            fullWidth 
+            size="small" 
+            defaultValue={field.defaultValue ? field.defaultValue.id : existingValue ? existingValue : ''}
+            label={field.title} 
+            disabled={!getValues(dependsOnId!)}
+            inputProps={register(fullFieldId)}>
+                {displayedOptions.map(selectable => (<MenuItem key={selectable.id} value={selectable.id}>{selectable.value}</MenuItem>))}
+            </TextField>
         )
 
         // return (
@@ -136,6 +137,23 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
 
     const parseMultiSelect = (field: iMultipleSelectField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
+        const dependsOnId = field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
+
+        if (field.unvisibleWhen?.includes(getValues(dependsOnId!))){
+            return null
+        }
+
+        let displayedOptions: iSelectable[] = [];
+        if (Array.isArray(field.options)){
+            displayedOptions = field.options;
+        }
+        else {
+            const selectedValue = getValues(dependsOnId!);
+            if (selectedValue && field.options[selectedValue]){
+                displayedOptions = field.options[selectedValue]
+            }
+        }
+
         return (
             <Controller
                 name={fullFieldId}
@@ -143,7 +161,7 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
                 render={({ field: { onChange, ..._field } }) => (
                     <MultiSelect
                         title={field.title}
-                        options={field.options}
+                        options={displayedOptions}
                         onChange={(_: any, data: any) => onChange(data)}
                         {..._field}
                     />
@@ -182,9 +200,9 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
     // parent will follow if we use dynamicField
     const Field = ({field, parent} : {field: iField, parent?: string}) => {
         switch (field.fieldType) {
-            case "TEXT_FIELD": return parseTextField(field as iTextField, parent);
-            case "BUTTON": return parseButtonField(field as iButtonField, parent);
-            case "SELECT": return parseSelectField(field as iSelectField, parent);
+            case "TEXT_FIELD": return <AsTextField field={field as iTextField} parent={parent} />
+            case "BUTTON": return <AsButtonField field={field as iButtonField} parent={parent} />
+            case "SELECT": return <AsSelectField field={field as iSelectField} parent={parent} />
             case "TITLE": return <Divider>{field.title}</Divider>
             case "DYNAMIC_LIST": return parseDynamicField(field as iDynamicListField, parent);
             case "MULTI_SELECT": return parseMultiSelect(field as iMultipleSelectField, parent);
