@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import Card from "../Components/Card";
 import DataGridTable from "../Components/DataGridTable";
-import createTanstackTable from "../assets/Functions/useTable";
+import createTanstackTable from "../assets/Functions/createTable";
 import { ColumnsType, iFilter, iToggleFilter } from "../interfaces";
 import { DataGridFooter } from "../Components/Footer";
 import { Box } from "@mui/material";
@@ -90,6 +90,7 @@ const ManageView = () => {
     }, []);
     
 
+    // if hidden columns doesnt exist - will display all columns
     const [visibleColumnsCache, updateVisibleColumns, _] = useCache("manage_table_visible_columns", () => ({}));
     const table = createTanstackTable<iMilitaryUser>(data, columns, visibleColumnsCache);
     const allColumns = table.getAllColumns().map(column => ({id: column.columnDef.id, value: column.columnDef.header}));

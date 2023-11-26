@@ -1,5 +1,4 @@
 import Card from "../Components/Card";
-import Filter from "../Components/Filter";
 import Form from "../Components/Form";
 import { iDynamicListField, iField, iSelectField } from "../interfaces";
 
@@ -290,7 +289,7 @@ const fields: iField[] = [
 
 const ZminotView = () => {
     return (
-        <Card sx={{height: "100%"}}>
+        <Card style={{height: "100%"}}>
             <Form fields={fields} onValidated={(formResult) => console.log(formResult)}/>
         </Card>
     )

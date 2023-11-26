@@ -29,6 +29,7 @@ const MultiSelect: React.FC<iMultiSelect> = ({ options, defaultSelectedValues, o
         disableCloseOnSelect
         forcePopupIcon
         filterSelectedOptions
+        ref={null}
         freeSolo
         options={optionsList}
         onChange={(_, data) => _internalOnChange(data)}

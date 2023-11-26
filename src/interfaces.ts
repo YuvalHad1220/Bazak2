@@ -1,4 +1,4 @@
-import { Cell } from "@tanstack/react-table";
+import { AccessorFn, Cell } from "@tanstack/react-table";
 import { FunctionComponent, ReactNode, SVGProps } from "react"
 import { RegisterOptions } from "react-hook-form";
 
@@ -86,7 +86,7 @@ export type ColumnsType<T> = {
   accessorKey?: string,
   id?: string, 
   type?: "Date" | "String" | "Array",
-  accessorFn?: (row: T) => string,
+  accessorFn?: AccessorFn<T>,
   cell?: (cell: Cell<T, unknown>) => ReactNode,
   filterFn?: (value: any, valueFromFilter: any) => boolean,
 }

@@ -15,17 +15,17 @@ interface iForm {
 }
 
 const getFullDependantId = (field: iField, parent?: string) => field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
-const gettFullFieldId = (field: iField, parent?: string) => parent ? `${parent}.${field.id}` : field.id;
+const getFullFieldId = (field: iField, parent?: string) => parent ? `${parent}.${field.id}` : field.id;
 const Form: React.FC<iForm> = ({fields, onValidated}) => {
-    const { register, unregister, handleSubmit, getValues, control, trigger, formState: {errors}, getFieldState } = useForm({reValidateMode: "onSubmit"});
+    const { register, handleSubmit, getValues, control, trigger, formState: {errors}, getFieldState } = useForm({reValidateMode: "onSubmit"});
 
     const AsTextField = ({field, parent}: {field: iTextField, parent?: string}) => {
-        const fullFieldId = gettFullFieldId(field, parent);
+        const fullFieldId = getFullFieldId(field, parent);
         return (
                 <TextField size="small" 
                 fullWidth 
-                helperText={errors[field.id]?.message?.toString()}
-                error={errors[field.id] ? true : false} 
+                helperText={errors[fullFieldId]?.message?.toString()}
+                error={Boolean(errors[fullFieldId]?.message)} 
                 type={field.inputType} 
                 label={field.title}  
                 {...register(fullFieldId, {...field.registerOptions})} />
@@ -37,7 +37,7 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
         const dependsOnId = getFullDependantId(field, parent);
         const onButtonClick = async () => {
             if (!field.onAction && !dependsOnId) {
-                console.log(`${field.id} does not have a dependency function or a dependant id`);
+                console.log(`${getFullFieldId(field, parent)} does not have a dependency function or a dependant id`);
                 return;
             }
             await trigger(dependsOnId);
@@ -58,7 +58,7 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
         );
     }
     const AsSelectField = ({field, parent}: {field: iSelectField, parent?: string})  => {
-        const fullFieldId = gettFullFieldId(field, parent);
+        const fullFieldId = getFullFieldId(field, parent);
         const dependsOnId = getFullDependantId(field, parent);
         let existingValue = getValues(fullFieldId);
         // triggers watching the state of dependsOn field
@@ -114,7 +114,7 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
     }
 
     const parseDynamicField = (field: iDynamicListField, parent?: string) => {
-        const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
+        const fullFieldId = getFullFieldId(field, parent);
         const {fields, append, remove} = useFieldArray({control, name: fullFieldId,});
         const innerFields = field.fields;
 
@@ -136,9 +136,8 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
     }
 
     const parseMultiSelect = (field: iMultipleSelectField, parent?: string) => {
-        const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
-        const dependsOnId = field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
-
+        const fullFieldId = getFullFieldId(field, parent);
+        const dependsOnId = getFullDependantId(field, parent);
         if (field.unvisibleWhen?.includes(getValues(dependsOnId!))){
             return null
         }
@@ -172,7 +171,7 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
     const parseDate = (field: iField, parent?: string) => {
         return (
             <Controller
-            name={field.id}
+            name={getFullFieldId(field, parent)}
             control={control}
             defaultValue={null}
             render={({

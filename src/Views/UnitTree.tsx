@@ -104,7 +104,7 @@ const UnitTreeView = () => {
         ]
       };
     return (
-        <Card sx={{height: "100%"}}>
+        <Card style={{height: "100%"}}>
             <MenuTree data={data}/>
         </Card>
     )

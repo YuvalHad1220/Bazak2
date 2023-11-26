@@ -10,11 +10,11 @@ const dateStringToDate = (dateStr: string) : Date => {
     return new Date(formattedDateString);
 } 
 
-const createTanstackTable = <T>(data: T[], columns: ColumnsType<T>[], visibleColumns: any, defaultRows?: number, debug: boolean = false) => {
+const createTanstackTable = <T>(data: T[], columns: ColumnsType<T>[], visibleColumns: {[key: string]: boolean}, defaultRows?: number, debug: boolean = false) => {
     const onColumn = (column: ColumnsType<T>) => {
         if (column.type === "Date") {
             return {
-                accessorFn: row => (row[column.accessorKey] as Date).toLocaleDateString("he-IL", {
+                accessorFn: row => (row[column.accessorKey as keyof T] as Date).toLocaleDateString("he-IL", {
                     day: "numeric",
                     month: "numeric",
                     year: "numeric"
