@@ -10,7 +10,7 @@ const dateStringToDate = (dateStr: string) : Date => {
     return new Date(formattedDateString);
 } 
 
-const createTanstackTable = <T>(data: T[], columns: ColumnsType<T>[], defaultRows?: number, debug: boolean = false) => {
+const createTanstackTable = <T>(data: T[], columns: ColumnsType<T>[], visibleColumns: any, defaultRows?: number, debug: boolean = false) => {
     const onColumn = (column: ColumnsType<T>) => {
         if (column.type === "Date") {
             return {
@@ -51,8 +51,9 @@ const createTanstackTable = <T>(data: T[], columns: ColumnsType<T>[], defaultRow
         initialState: {
             pagination: {
                 pageIndex: 0,
-                pageSize: defaultRows ? defaultRows : 20
+                pageSize: defaultRows ? defaultRows : 20,
             },
+            columnVisibility: visibleColumns
         },
         enableFilters: true,
         enableSorting: true,

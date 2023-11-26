@@ -84,8 +84,35 @@ export type iField = iTextField | iButtonField | iMultipleSelectField | iSelectF
 export type ColumnsType<T> = {
   header: string,
   accessorKey?: string,
+  id?: string, 
   type?: "Date" | "String" | "Array",
   accessorFn?: (row: T) => string,
   cell?: (cell: Cell<T, unknown>) => ReactNode,
   filterFn?: (value: any, valueFromFilter: any) => boolean,
 }
+
+
+
+type tFlterField = "TOGGLE" | "MULTISELECT";
+interface iBasicFilter {
+    title: string,
+    id: string,
+    options: iSelectable[],
+    type: tFlterField,
+    width?: 1|2|3|4|5|6|7|8|9|10|11|12,
+    dependsOn?: string,
+    unvisibleOn?: string,
+    defaultValues?: iSelectable[]
+};
+
+export interface iToggleFilter extends iBasicFilter{
+    selectAll: boolean,
+    flexDirection?: "row" | "column",
+    onClick?: (newFilterState: Set<string>) => void
+}
+
+export interface iMultiSelectFilter extends iBasicFilter {
+
+}
+
+export type iFilter = iToggleFilter | iMultiSelectFilter;

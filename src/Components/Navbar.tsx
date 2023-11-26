@@ -1,7 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Card from "./Card"
-import { Breadcrumbs, Link, ToggleButton, ToggleButtonGroup, Typography, styled } from "@mui/material";
+import { Breadcrumbs, Button, Link, ToggleButton, ToggleButtonGroup, Typography, styled } from "@mui/material";
 import { iSelectable } from "../interfaces";
+import { Table } from "@tanstack/react-table";
 
 const StyledCard = styled(Card)(({theme}) => ({
     height: 78,
@@ -29,10 +30,14 @@ export const DefaultNavbar = ({title} : {title: string}) => {
 
 
 // will include column hiding, global filtering, expand to column filter
-export const DataGridNavbar = () => {
+interface iDataGridNavbar<T> {
+    table: Table<T>,
+}
+export const DataGridNavbar: React.FC<iDataGridNavbar<any>> = ({table}) => {
     return (
         <StyledCard>
             <Typography>טבלת זמינות - כלל צהל</Typography>
+            <Button>סינון עמודות</Button>
         </StyledCard>
     )
 };

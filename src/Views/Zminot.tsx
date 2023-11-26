@@ -1,7 +1,7 @@
 import Card from "../Components/Card";
 import Filter from "../Components/Filter";
 import Form from "../Components/Form";
-import { iField } from "../interfaces";
+import { iDynamicListField, iField, iSelectField } from "../interfaces";
 
 const fields: iField[] = [
     {
@@ -10,12 +10,12 @@ const fields: iField[] = [
         title: "מספר מכונית",
         fieldType: "TEXT_FIELD",
         width: 2,
-//        registerOptions: {
-//            required: "חובה להכניס מספר מכונית",
-//            maxLength: {value: 8, message: "מספר מכונית חייב להיות בדיוק 8 תווים"},
-//            minLength: {value: 8, message: "מספר מכונית חייב להיות בדיוק 8 תווים"},
+       registerOptions: {
+           required: "חובה להכניס מספר מכונית",
+           maxLength: {value: 8, message: "מספר מכונית חייב להיות בדיוק 8 תווים"},
+           minLength: {value: 8, message: "מספר מכונית חייב להיות בדיוק 8 תווים"},
 
-  //      }
+       }
     },
     {
         id: "search_car",
@@ -270,7 +270,7 @@ const fields: iField[] = [
                     { id: "system5", value: "מערכת 5" }
                 ],
                 width: 6
-            },
+            } as iSelectField,
             {
                 id: "isSystemKashir",
                 title: "כשירות",
@@ -282,17 +282,16 @@ const fields: iField[] = [
                 defaultValue: {id: "kashir_system", value: "כשיר"},
                 width: 6,
                 dependsOn: "systemName"
-            }     
+            } as iSelectField
         ]
-    }   
+    } as iDynamicListField
 ];
 
 
 const ZminotView = () => {
     return (
         <Card sx={{height: "100%"}}>
-            <Form fields={fields}/>
-            <Filter />
+            <Form fields={fields} onValidated={(formResult) => console.log(formResult)}/>
         </Card>
     )
 };
