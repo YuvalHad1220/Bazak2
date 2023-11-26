@@ -51,6 +51,7 @@ interface iBasicField {
     fieldType: fieldTypes,
     dependsOn?: string, // a key
     registerOptions?: RegisterOptions
+    unvisibleWhen?: string[] // list of keys of dependsOn that if their value is the same then its inivislbe
 }
 
 export interface iTextField extends iBasicField {
@@ -64,18 +65,18 @@ export interface iButtonField extends iBasicField {
 }
 
 export interface iMultipleSelectField extends iBasicField {
-    options: iSelectable[],
-    defaultSelectedValues?: iSelectable[],
+  options: iSelectable[] | {[key: string] : iSelectable[]},
+  defaultSelectedValues?: iSelectable[],
 }
 
 export interface iSelectField extends iBasicField {
-    options: iSelectable[],
-    defaultValue?: iSelectable,
+  options: iSelectable[] | {[key: string] : iSelectable[]},
+  defaultValue?: iSelectable,
 
 }
 
 export interface iDynamicListField extends iBasicField {
-    fields: iField[]
+  fields: iField[]
 }
 
 export type iField = iTextField | iButtonField | iMultipleSelectField | iSelectField;

@@ -72,11 +72,36 @@ const SignUpView = () => {
             id: "selectPermissionValue",
             title: "יחידה",
             dependsOn: "permissionType",
-            options: [
-                {
-                    id: "admin", value:"צריך עדיין להכניס את האופציה של הצגת אופציות לפי מפתח, כרגע יכניס id = admin"
-                }
-            ]
+            unvisibleWhen: ["all", "manager"],
+            options: {
+                "gdod": [
+                    {id: "gdod-4", value: "גדוד 4"},
+                    {id: "gdod-12", value: "גדוד 12"},
+                    {id: "gdod-7", value: "גדוד 7"},
+                    {id: "gdod-15", value: "גדוד 15"}
+                ],
+                "hativa": [
+                    {id: "hativa3", value: "חטיבה 3"},
+                    {id: "hativa5", value: "חטיבה 5"},
+                    // Additional options for hativa
+                    {id: "hativa2", value: "חטיבה 2"},
+                    {id: "hativa7", value: "חטיבה 7"}
+                ],
+                "ogda": [
+                    {id: "ogda2", value: "אוגדה 2"},
+                    {id: "ogda8", value: "אוגדה 8"},
+                    // Additional options for ogda
+                    {id: "ogda5", value: "אוגדה 5"},
+                    {id: "ogda10", value: "אוגדה 10"}
+                ],
+                "pikod": [
+                    {id: "pikod1", value: "פיקוד 1"},
+                    {id: "pikod6", value: "פיקוד 6"},
+                    // Additional options for pikod
+                    {id: "pikod3", value: "פיקוד 3"},
+                    {id: "pikod8", value: "פיקוד 8"}
+                ],
+            }
         },
         {
             fieldType: "SELECT",

@@ -1,6 +1,6 @@
 import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form";
 import { Button, Divider, Grid, MenuItem, TextField } from "@mui/material";
-import { iButtonField, iDynamicListField, iField, iMultipleSelectField, iSelectField, iTextField } from "../interfaces";
+import { iButtonField, iDynamicListField, iField, iMultipleSelectField, iSelectField, iSelectable, iTextField } from "../interfaces";
 import React from "react";
 import MultiSelect from "./MultiSelect";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -54,25 +54,63 @@ const Form: React.FC<iForm> = ({fields, onValidated}) => {
     const parseSelectField = (field: iSelectField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
         const dependsOnId = field.dependsOn ? parent ? `${parent}.${field.dependsOn}` : field.dependsOn : undefined;
-        const value = getValues(fullFieldId);
+        let existingValue = getValues(fullFieldId);
         // triggers watching the state of dependsOn field
         if (dependsOnId)
             useWatch({name: dependsOnId, control});
+        
+        if (field.unvisibleWhen?.includes(getValues(dependsOnId!)))
+            return null
+
+        let displayedOptions: iSelectable[] = [];
+        if (Array.isArray(field.options)){
+            displayedOptions = field.options;
+        }
+        else {
+            const selectedValue = getValues(dependsOnId!);
+            if (selectedValue && field.options[selectedValue]){
+                displayedOptions = field.options[selectedValue]
+            }
+        }
+
         return (
                 <TextField 
                 select 
                 fullWidth 
                 size="small" 
-                defaultValue={field.defaultValue ? field.defaultValue.id : ''}
+                defaultValue={field.defaultValue ? field.defaultValue.id : existingValue ? existingValue : ''}
                 label={field.title} 
-                {...(value ? {value} : {}) }
                 disabled={!getValues(dependsOnId!)}
                 inputProps={register(fullFieldId)}>
-                    {field.options.map(selectable => (<MenuItem key={selectable.id} value={selectable.id}>{selectable.value}</MenuItem>))}
+                    {displayedOptions.map(selectable => (<MenuItem key={selectable.id} value={selectable.id}>{selectable.value}</MenuItem>))}
                 </TextField>
         )
 
-    };
+        // return (
+        //     <Controller 
+        //     name={field.id}
+        //     control={control}
+        //     defaultValue={field.defaultValue ? field.defaultValue.id : ''}
+        //     render={({
+        //         field: {onChange, value},
+        //         fieldState: { error }
+        //     }) => (
+        //         <TextField 
+        //         select 
+        //         fullWidth 
+        //         size="small" 
+        //         value={value}
+        //         label={field.title} 
+        //         onChange={onChange}
+        //         disabled={!getValues(dependsOnId!)}
+        //         inputProps={register(fullFieldId)}>
+        //             {displayedOptions.map(selectable => (<MenuItem key={selectable.id} value={selectable.id}>{selectable.value}</MenuItem>))}
+        //         </TextField>
+        //     )}
+        //     />
+        // );
+        
+    }
 
     const parseDynamicField = (field: iDynamicListField, parent?: string) => {
         const fullFieldId = parent ? `${parent}.${field.id}`: field.id;
