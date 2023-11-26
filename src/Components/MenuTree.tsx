@@ -3,7 +3,7 @@ import { iMenuTreeItem } from "../interfaces";
 import { TreeItem, TreeView, treeItemClasses} from "@mui/x-tree-view";
 import { Box, TextField, Typography, alpha, styled } from "@mui/material";
 import { useMemo } from "react";
-import useDebounce from "../hooks/useDecounce";
+import useDebounce from "../hooks/useDebounce";
 
 interface iMenuTree {
     data: iMenuTreeItem

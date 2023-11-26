@@ -2,8 +2,11 @@
 // will take care of pagination and rendering
 // wont control how we sort, search or filter (that will be controlled by header)
 
-import { Box, Table, TableBody, TableCell, TableCellProps, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
+import { Box, Button, Table, TableBody, TableCell, TableCellProps, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
 import { Header, Table as TanstackTable, flexRender } from "@tanstack/react-table";
+import useDebounce from "../hooks/useDebounce";
+import { useEffect } from "react";
+import { downloadTanstackTable } from "../assets/Functions/downloadTable";
 
 interface iTable<T> {
     regularCellProps?: TableCellProps,
@@ -14,13 +17,8 @@ interface iTable<T> {
 }
 
 const DataGridTable: React.FC<iTable<any>> = ({ regularCellProps, headerCellProps, table, pageSizeOptions = [10,20,30,40,50], }) => {
-    const handleColumnSort = () => {
-        table.setColumnFilters([{
-            id: "lastUpdateDate",
-            value: new Date('2023-11-19'),
-        }]);
-    }
-
+    const [immediate, debounced, setImmediate] = useDebounce("", 200);
+    
     const HeaderRenderer = (header: Header<any, unknown>) => {
         const isSorted = header.column.getIsSorted();        
         const nextStateFunc = () => isSorted === "desc" ? header.column.toggleSorting(false) : isSorted === "asc" ? header.column.clearSorting() : header.column.toggleSorting(true);
@@ -32,11 +30,14 @@ const DataGridTable: React.FC<iTable<any>> = ({ regularCellProps, headerCellProp
             </TableCell>
         )
     }
+
+    useEffect(() => {
+        table.setGlobalFilter(debounced);
+    }, [debounced]);
+
     return (
         <Box sx={{display: "flex", flexDirection: "column"}}>
-            <TextField  label="חיפוש גלובלי" size="small" onChange={(event) => table.setGlobalFilter(event.target.value)}/>
-            {/* <Button variant="contained" onClick={handleColumnSort}>לחץ עליי ככה שאציג רק תאריכים מעל ה19.11.23</Button> */}
-            {/* <Button variant="contained" size="small" onClick={() => {table.setColumnVisibility({sadir: false})}}>לחץ עליי בשביל להסתיר את הסדיר לא סדיר</Button> */}
+            <TextField  label="חיפוש גלובלי" size="small" value={immediate} onChange={(event) => setImmediate(event.target.value)}/>
             <Box sx={{ flex: "1 1 auto", maxHeight: "1000px", minHeight: 0, overflowY: "scroll"}}>
                 <Table stickyHeader >
                     <TableHead>
@@ -72,6 +73,7 @@ const DataGridTable: React.FC<iTable<any>> = ({ regularCellProps, headerCellProp
                 rowsPerPage={table.getState().pagination.pageSize}
                 onRowsPerPageChange={eventOfRows => table.setPageSize(parseInt(eventOfRows.target.value))}
             />
+            <Button onClick={() => downloadTanstackTable(table, "טבלת זמינות כלל צהלית")}>הורדה כטבלה</Button>
         </Box>
 
     );

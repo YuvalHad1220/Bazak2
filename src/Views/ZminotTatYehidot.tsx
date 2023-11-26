@@ -1,6 +1,8 @@
+import { Button } from "@mui/material";
 import Card from "../Components/Card";
 import PrecentageTable from "../Components/PrecentageTable";
 import { iMagadData } from "../interfaces";
+import { downloadPrecentageTable } from "../assets/Functions/downloadTable";
 
 const ZminotTatYehidotView = () => {
 
@@ -218,6 +220,7 @@ const ZminotTatYehidotView = () => {
     return (
         <Card style={{height: "100%"}}>
             <PrecentageTable magadData={magadData}/>
+            <Button onClick={() => downloadPrecentageTable(magadData, "זמינות תת יחידות")}>הורד כאקסל</Button>
         </Card>
     )
 };

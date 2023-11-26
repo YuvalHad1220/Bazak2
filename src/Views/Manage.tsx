@@ -45,7 +45,7 @@ interface iMilitaryUser {
   
 
 const ManageView = () => {
-    const data = useMemo(() => generateRandomMilitaryUsers(40_000), []);
+    const data = useMemo(() => generateRandomMilitaryUsers(120_000), []);
     const columns = useMemo(() => {
         return [
           {
